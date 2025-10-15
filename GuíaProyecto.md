@@ -85,19 +85,23 @@
 
 ---
 
-**Sección 8: Estado Actual del Proyecto (Actualizado el [FECHA])**
-
-El proyecto no ha iniciado todavia. Necesitamos definir como vamos a organizar el desarrollo del proyecto, y por donde podemos comenzar. Idealmente seguiriamos esta estructura.
+**Sección 8: Estado Actual del Proyecto (Actualizado el 14 de Octubre de 2025)**
 
 - **Completado:**
-    - [ ] Tarea completada 1.
-    - [ ] Tarea completada 2.
+    - [x] Se definió la **"Fase 0: Configuración del Entorno y Esqueleto del Proyecto"** como el punto de partida estratégico.
+        - **Razón de esta decisión:** Acordamos comenzar por la infraestructura para construir una base sólida, reproducible y escalable. Este enfoque nos permite verificar que todos los componentes (backend, frontend, base de datos) se comunican correctamente antes de empezar a desarrollar la lógica de negocio, minimizando así riesgos de integración futuros.
+        - **Componentes de esta fase:** La fase incluye la creación de la estructura de directorios, la configuración de la orquestación de contenedores con `docker-compose.yml`, la creación de los `Dockerfile` para cada servicio y, finalmente, la inicialización de los esqueletos de los proyectos Django y React.
+    - [x] Se crearon la estructura de directorios y todos los archivos de configuración iniciales de Docker (`docker-compose.yml`, `Dockerfile`s, `requirements.txt`).
+    - [x] Se estableció el flujo de trabajo "Handshake/Handoff" como nuestro proceso estándar para garantizar la continuidad entre sesiones.
+
 - **En Progreso:**
-    - [ ] Tarea actual en la que estamos trabajando.
+    - [ ] Instalación del entorno de desarrollo local por parte del usuario (WSL2 y Docker Desktop).
+
 - **Siguiente Tarea:**
-    - [ ] La próxima tarea a abordar.
+    - [ ] Una vez que Docker esté operativo, inicializar el esqueleto del proyecto Django usando el comando `docker compose run`.
+
 - **Bloqueos o Dudas:**
-    - [ ] Cualquier problema o pregunta que necesitemos resolver.
+    - [ ] El avance en la configuración del proyecto está en pausa hasta que Docker Desktop esté instalado y funcional en la máquina local.
 
 
 
