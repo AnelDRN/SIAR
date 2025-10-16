@@ -29,32 +29,47 @@ Por favor, lee y procesa ambos documentos. Confirma que has adoptado tu rol como
 
 ### 2. Prompt de Fin de Sesión (El "Handoff")
 
-**Objetivo:** Forzar a Gemini a resumir el trabajo realizado durante la sesión. Este resumen se convierte en la actualización que pegarás en tu ``@GuíaProyecto.md`, creando un ciclo perfecto de continuidad.
+**Objetivo:** Forzar a Gemini a resumir el trabajo realizado durante la sesión, incluyendo el contexto estratégico, para crear una actualización de estado autosuficiente. Este resumen se convierte en la actualización para la `GuíaProyecto.md`.
 
 **Cuándo usarlo:** Cuando hayas terminado de trabajar por el día.
 
 ```markdown
 Excelente trabajo hoy. Vamos a finalizar esta sesión.
 
-Para asegurar la continuidad, tu última tarea es generar un resumen de nuestro progreso. Este resumen lo usaré para actualizar la Sección 8 del `GuíaProyecto.md` para nuestra próxima sesión.
+Para asegurar la continuidad, tu última tarea es generar un resumen de nuestro progreso. Este resumen lo usaré para añadir al final de la Sección 8 del `GuíaProyecto.md` el progreso de esta sesión, manteniendo un registro acumulativo.
 
 **Instrucciones para el Resumen:**
-- Sé conciso y utiliza listas.
-- Basa el resumen **únicamente** en lo que discutimos y logramos en la conversación de hoy.
-- Utiliza el siguiente formato Markdown exacto:
+- El resumen debe ser autosuficiente y no depender de la memoria de la sesión.
+- Debe incluir no solo las tareas técnicas, sino el contexto estratégico acordado.
+- Utiliza el siguiente formato Markdown exacto, llenando cada sección con la información correspondiente de la sesión actual:
  
 **Formato Requerido:**
-```markdown
-- **Completado:**
-    - [x] [Descripción de la tarea completada hoy, ej: Implementación del endpoint POST /api/v1/analysis/].
-    - [x] [Otra tarea completada hoy].
-- **En Progreso:**
-    - [ ] [La tarea que quedó a medias, si aplica].
-- **Siguiente Tarea:**
-    - [ ] [La próxima tarea clara y definida que abordaremos en la siguiente sesión].
-- **Bloqueos o Dudas:**
-    - [ ] [Nuevas preguntas o problemas que surgieron hoy, ej: "Necesitamos decidir la mejor forma de manejar análisis de larga duración (tareas asíncronas)"].
-```
+````markdown
+**Resumen Ejecutivo de la Sesión:**
+*   (Resume aquí los logros estratégicos y decisiones clave de la sesión en 1-2 frases.)
 
-Por favor, genera este bloque de resumen ahora.Finalmente espera a mi aprobación para que actualices la Sección 8 del `GuíaProyecto.md` con tu resumen.
+---
+
+**Hoja de Ruta del Proyecto (MVP):**
+*   (Incrusta aquí el plan de fases del proyecto acordado, marcando el estado de cada fase, ej: [Completada], [En Progreso].)
+
+---
+
+**Arquitectura de Datos Envisionada:**
+*   (Describe aquí la visión de la arquitectura de la base de datos, incluyendo los modelos principales y sus relaciones.)
+
+---
+
+**Estado Actual y Siguientes Pasos:**
+- **Progreso de Hoy:**
+    - [x] (Lista los logros técnicos y comandos clave ejecutados.)
+- **Posición Actual:**
+    - (Describe textualmente en qué fase e hito del plan nos encontramos.)
+- **Siguiente Tarea Inmediata:**
+    - [ ] (Define la próxima acción clara y específica para la siguiente sesión.)
+- **Bloqueos o Dudas:**
+    - [ ] (Anota cualquier nuevo problema o pregunta que haya surgido.)
+````
+
+Por favor, genera este bloque de resumen ahora. Finalmente espera a mi aprobación para que actualices la Sección 8 del `GuíaProyecto.md` con tu resumen.
 ```

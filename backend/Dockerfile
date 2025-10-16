@@ -8,7 +8,10 @@ ENV PYTHONUNBUFFERED 1
 # Set work directory
 WORKDIR /app
 
-# Install dependencies
+# Install system dependencies for GDAL
+RUN apt-get update && apt-get install -y --no-install-recommends gdal-bin libgdal-dev build-essential
+
+# Install python dependencies
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 

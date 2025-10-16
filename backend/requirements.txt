@@ -2,4 +2,6 @@ Django>=3.2,<4.0
 psycopg2-binary
 geopandas
 rasterio
-gdal
+gdal~=3.10.3
+djangorestframework
+djangorestframework-gis
