@@ -143,3 +143,18 @@ Este proyecto busca desarrollar el Sistema de Identificación de Áreas para Ref
 
 - **Bloqueos o Dudas:**
     - [ ] Ninguno.
+4
+- **Progreso de Hoy (Sesión del 20 de Octubre de 2025):**
+    - [x] Se actualizó GEMINI.md para robustecer el protocolo de inicio de sesión del proyecto.
+    - [x] Se verificó que los modelos AnalysisResult y Species ya están definidos en analysis/models.py, adelantando el trabajo de la Fase 1.
+    - [x] Se clarificó que la siguiente acción necesaria es la creación de las migraciones para los modelos existentes, no la escritura de su código.
+
+- **Posición Actual:**
+    - Nos encontramos en la Fase 1, listos para aplicar las migraciones de los modelos de datos ya definidos.
+    - Siguiente Tarea Inmediata:
+
+- **Siguiente Tarea Inmediata:**
+    - [ ] Ejecutar el comando makemigrations para la app analysis para generar los archivos de migración correspondientes a los modelos Species y AnalysisResult.
+
+- **Bloqueos o Dudas:**
+    - [ ] Ninguno.

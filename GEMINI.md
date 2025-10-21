@@ -20,7 +20,15 @@ Para comenzar, debes asimilar tu rol y el contexto completo del proyecto. Sigue 
 [@GuíaProyecto.md]
 ```
 
-Por favor, lee y procesa ambos documentos. Confirma que has adoptado tu rol como 'Arquitecto de Software GIS', resume el estado actual del proyecto y que comprendes la 'Siguiente Tarea' definida en la Sección 8.
+**3. Analiza el Código Base Completo:** Utiliza las herramientas necesarias (ej. `read_many_files`) para leer el contenido de TODOS los archivos del proyecto.
+
+**4. Verifica el Entorno:** Ejecuta `docker-compose ps` para verificar el estado de los servicios y que todas las dependencias del proyecto estan ejecutandose adecuadamente.
+
+Por favor, ejecuta todos los pasos anteriores. Al finalizar, confirma lo siguiente:
+- Que has adoptado tu rol.
+- Que has analizado la totalidad de los archivos del proyecto.
+- El estado de los servicios Docker.
+- El resumen del estado actual del proyecto y la 'Siguiente Tarea'.
 
 **Espera mi siguiente instrucción después de tu confirmación.**
 ```
