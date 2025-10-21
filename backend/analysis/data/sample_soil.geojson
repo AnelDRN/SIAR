@@ -1,0 +1,11 @@
+{
+"type": "FeatureCollection",
+"name": "sample_soil",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{ "type": "Feature", "properties": { "soil_type": "Silt" }, "geometry": { "type": "Polygon", "coordinates": [ [ [ -74.0, 4.0 ], [ -73.8, 4.0 ], [ -73.8, 3.8 ], [ -74.0, 3.8 ], [ -74.0, 4.0 ] ] ] } },
+{ "type": "Feature", "properties": { "soil_type": "Clay" }, "geometry": { "type": "Polygon", "coordinates": [ [ [ -73.9, 3.9 ], [ -73.7, 3.9 ], [ -73.7, 3.7 ], [ -73.9, 3.7 ], [ -73.9, 3.9 ] ] ] } },
+{ "type": "Feature", "properties": { "soil_type": "Sand" }, "geometry": { "type": "Polygon", "coordinates": [ [ [ -73.85, 3.85 ], [ -73.65, 3.85 ], [ -73.75, 3.65 ], [ -73.85, 3.85 ] ] ] } },
+{ "type": "Feature", "properties": { "soil_type": "Loam" }, "geometry": { "type": "Polygon", "coordinates": [ [ [ -73.95, 3.75 ], [ -73.75, 3.75 ], [ -73.85, 3.95 ], [ -73.95, 3.75 ] ] ] } }
+]
+}

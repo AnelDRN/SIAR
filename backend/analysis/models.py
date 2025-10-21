@@ -4,7 +4,6 @@ class AnalysisRequest(models.Model):
     """
     Represents a single analysis request initiated by a user.
     """
-    request_id = models.AutoField(primary_key=True)
     area_of_interest = models.PolygonField()
     created_at = models.DateTimeField(auto_now_add=True)
     status = models.CharField(max_length=20, default='PENDING')

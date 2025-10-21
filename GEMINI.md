@@ -35,49 +35,39 @@ Por favor, ejecuta todos los pasos anteriores. Al finalizar, confirma lo siguien
 
 ---
 
-### 2. Prompt de Fin de Sesión (El "Handoff")
+### 2. Prompt de Fin de Sesión (Handoff & Refactor)
 
-**Objetivo:** Forzar a Gemini a resumir el trabajo realizado durante la sesión, incluyendo el contexto estratégico, para crear una actualización de estado autosuficiente. Este resumen se convierte en la actualización para la `GuíaProyecto.md`.
+**Objetivo:** Forzar a Gemini a consolidar el progreso de la sesión directamente en el `GuíaProyecto.md`, manteniendo el documento siempre limpio y actualizado.
 
 **Cuándo usarlo:** Cuando hayas terminado de trabajar por el día.
 
 ```markdown
-Excelente trabajo hoy. Vamos a finalizar esta sesión.
+Excelente trabajo hoy. Vamos a finalizar esta sesión con nuestro proceso de "Handoff & Refactor".
 
-Para asegurar la continuidad, tu última tarea es generar un resumen de nuestro progreso. Este resumen lo usaré para añadir al final de la Sección 8 del `GuíaProyecto.md` el progreso de esta sesión, manteniendo un registro acumulativo.
+Tu tarea final es actualizar nuestro documento `GuíaProyecto.md` para reflejar todo el progreso de la sesión de hoy. Sigue estos pasos:
 
-**Instrucciones para el Resumen:**
-- El resumen debe ser autosuficiente y no depender de la memoria de la sesión.
-- Debe incluir no solo las tareas técnicas, sino el contexto estratégico acordado.
-- Utiliza el siguiente formato Markdown exacto, llenando cada sección con la información correspondiente de la sesión actual:
- 
-**Formato Requerido:**
+1.  **Lee el `GuíaProyecto.md`:** Carga la versión más reciente del documento.
+2.  **Prepara un Bloque de Resumen:** Crea un nuevo bloque de resumen para la sesión de hoy usando el formato definido a continuación.
+3.  **Actualiza la Bitácora:** Añade el nuevo bloque de resumen al final de la **Sección 8**. No borres el contenido histórico.
+4.  **Actualiza el Resto del Documento:** Revisa y actualiza cualquier otra sección que haya cambiado (ej. Pila Tecnológica, Arquitectura, etc.). Si hemos discutido nuevas mejoras, añádelas a la **Sección 9**.
+5.  **Presenta el Documento Completo:** Muéstrame el contenido íntegro y final del `GuíaProyecto.md` actualizado para mi revisión y aprobación.
+6.  **Espera la Aprobación:** No escribas los cambios hasta que yo te dé la confirmación final.
+
+**Formato para el Bloque de Resumen de la Sesión:**
 ````markdown
-**Resumen Ejecutivo de la Sesión:**
-*   (Resume aquí los logros estratégicos y decisiones clave de la sesión en 1-2 frases.)
-
----
-
-**Hoja de Ruta del Proyecto (MVP):**
-*   (Incrusta aquí el plan de fases del proyecto acordado, marcando el estado de cada fase, ej: [Completada], [En Progreso].)
-
----
-
-**Arquitectura de Datos Envisionada:**
-*   (Describe aquí la visión de la arquitectura de la base de datos, incluyendo los modelos principales y sus relaciones.)
-
----
-
-**Estado Actual y Siguientes Pasos:**
-- **Progreso de Hoy:**
-    - [x] (Lista los logros técnicos y comandos clave ejecutados.)
-- **Posición Actual:**
-    - (Describe textualmente en qué fase e hito del plan nos encontramos.)
-- **Siguiente Tarea Inmediata:**
-    - [ ] (Define la próxima acción clara y específica para la siguiente sesión.)
-- **Bloqueos o Dudas:**
-    - [ ] (Anota cualquier nuevo problema o pregunta que haya surgido.)
+- **Resumen de la Sesión del [FECHA]:**
+    - **Resumen Ejecutivo:** (Resume aquí los logros estratégicos y decisiones clave de la sesión en 1-2 frases.)
+    - **Hoja de Ruta del Proyecto (MVP):**
+        - (Incrusta aquí el plan de fases del proyecto, marcando el estado actualizado de cada fase.)
+    - **Hitos Clave de la Sesión:**
+        - [x] (Lista los logros técnicos y comandos clave ejecutados.)
+    - **Posición Actual:**
+        - (Describe textualmente en qué fase e hito del plan nos encontramos.)
+    - **Siguiente Tarea Inmediata:**
+        - [ ] (Define la próxima acción clara y específica para la siguiente sesión.)
+    - **Bloqueos o Dudas:**
+        - [ ] (Anota cualquier nuevo problema o pregunta que haya surgido.)
 ````
 
-Por favor, genera este bloque de resumen ahora. Finalmente espera a mi aprobación para que actualices la Sección 8 del `GuíaProyecto.md` con tu resumen.
+Por favor, comienza el proceso de "Handoff & Refactor" ahora.
 ```
