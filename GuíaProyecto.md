@@ -158,3 +158,35 @@ Este proyecto busca desarrollar el Sistema de Identificación de Áreas para Ref
 
 - **Bloqueos o Dudas:**
     - [ ] Ninguno.
+    
+- **Progreso de Hoy(Sesión del 22 de Octubre de 2025)**:
+- **Resumen Ejecutivo de la Sesión:**
+   * Se dedicó gran parte de la sesión a solucionar problemas del entorno Docker, específicamente con montajes
+      de volumen en Windows, y a resolver conflictos de migración en la aplicación analysis. Se logró poner en
+      marcha el servicio de backend y aplicar las migraciones iniciales.Cabe aclarar que el usuario menciono que esta trabajando en el desarrollo del proyecto en distintos ordenadores de manera no simultanea, manteniendo la sincronizacion entre ellos con github. 
+
+ - **Progreso:**
+    - [x] Identificación y resolución de problemas de montaje de volumen de Docker en Windows.
+    - [x] Configuración del servicio backend para que funcione sin montajes de volumen, dependiendo de la
+        copia de código en la imagen.
+    - [x] Reseteo completo de la base de datos y las migraciones de la aplicación analysis.
+    - [x] Aplicación exitosa de las migraciones iniciales para los modelos AnalysisRequest, Species y
+        AnalysisResult.
+    - [ ] Intento fallido de hacer que el campo area_of_interest sea no nulo nuevamente debido a problemas
+        persistentes con el sistema de migraciones de Django.  
+
+- **Posición Actual:**
+    - Nos encontramos en la Fase 1 (Modelo de Datos y Creación de la API). Los modelos AnalysisRequest,
+        Species y AnalysisResult están definidos y sus migraciones iniciales han sido aplicadas exitosamente
+        a la base de datos. El campo area_of_interest en AnalysisRequest actualmente acepta valores nulos.   
+
+- **Siguiente Tarea Inmediata:**
+    - [ ] Abordar el problema de hacer que el campo area_of_interest sea no nulo en el modelo
+        AnalysisRequest. Esto podría requerir una investigación más profunda del sistema de migraciones de
+        Django o una solución manual.
+    - [ ] Crear los endpoints de API para los modelos Species y AnalysisResult.   
+
+- **Bloqueos o Dudas:**
+    - [x] Flujo de Trabajo de Desarrollo: Necesidad de reconstruir el contenedor backend en cada cambio de
+        código debido a problemas con los montajes de volumen en Windows.Para la proxima sesion intentar configurar los contenedores para que esto no sea una necesidad.
+    - [x] Portabilidad: Confirmación de la portabilidad del entorno a otros equipos.
