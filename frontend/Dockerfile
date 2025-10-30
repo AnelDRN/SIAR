@@ -1,16 +1,20 @@
-# Base image
-FROM node:16-alpine
+# Use an official Node runtime as a parent image
+FROM node:18-alpine
 
-# Set work directory
+# Set the working directory in the container
 WORKDIR /app
 
-# Install dependencies
-COPY package.json . 
-COPY package-lock.json . 
-RUN npm install
+# Copy package.json and package-lock.json
+COPY package.json ./
 
-# Copy project
+# Install app dependencies
+# RUN npm install
+
+# Bundle app source
 COPY . .
 
-# Default command
+# Creates a "production" build
+# RUN npm run build
+
+# The main command to run when the container starts
 CMD ["npm", "start"]

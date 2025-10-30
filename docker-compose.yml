@@ -12,14 +12,20 @@ services:
     depends_on:
       - database
 
-#  frontend:
-#    build: ./frontend
-#    ports:
-#      - "3000:3000"
-#    volumes:
-#      - ./frontend:/app
-#    depends_on:
-#      - backend
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    stdin_open: true
+    tty: true
+    environment:
+      - NODE_OPTIONS=--openssl-legacy-provider
+    command: sh -c "npm install && npm start"
+    depends_on:
+      - backend
 
   database:
     image: postgis/postgis:13-3.1

@@ -132,28 +132,34 @@
 
 ---
 
-- **Resumen de la Sesión del 21 de Octubre de 2025:**
-    - **Resumen Ejecutivo:** Se completó la Fase 1 con la implementación total de la API y se avanzó decisivamente en la Fase 2, construyendo y probando un motor de análisis geoespacial funcional de punta a punta que procesa pendiente y suelo, y guarda los resultados.
+- **Resumen de la Sesión del 29 de Octubre de 2025:**
+    - **Resumen Ejecutivo:** Se dedicó la sesión a intentar configurar el entorno de desarrollo del frontend, encontrando numerosos problemas de compatibilidad y configuración con React, react-leaflet y Docker. Se resolvieron múltiples conflictos de dependencias, pero el frontend aún no es completamente funcional.
     - **Hoja de Ruta del Proyecto (MVP):**
         - **Fase 0:** Configuración del Entorno y Esqueleto [Completada]
         - **Fase 1:** Modelo de Datos y Creación de la API [Completada]
-        - **Fase 2:** Implementación del Núcleo de Análisis Geoespacial [En Progreso]
-        - **Fase 3:** Desarrollo del Frontend y Visualización de Mapa
+        - **Fase 2:** Implementación del Núcleo de Análisis Geoespacial [Completada]
+        - **Fase 3:** Desarrollo del Frontend y Visualización de Mapa [En Progreso - Bloqueado]
         - **Fase 4:** Integración Completa y Visualización de Resultados
     - **Hitos Clave de la Sesión:**
-        - [x] Finalizada la API para los modelos `Species` y `AnalysisResult`.
-        - [x] Corregido el flujo de Docker con un montaje de volumen para el backend.
-        - [x] Creado un script para generar datos de muestra realistas (DEM y suelos).
-        - [x] Implementado el núcleo del motor de análisis en `core.py` (carga, recorte, cálculo de pendiente, rasterización y combinación de criterios).
-        - [x] Implementada la vectorización y guardado de los polígonos resultantes en la base de datos.
-        - [x] Creado un script de prueba de integración (`test_api_integration.py`) que valida el flujo completo a través de una llamada a la API.
-        - [x] ¡Logrado un flujo de análisis funcional de punta a punta!
-    - **Posición Actual:**
-        - Hemos completado la Fase 1 y la mayor parte de la Fase 2. Tenemos un motor de análisis funcional que se dispara desde la API y guarda resultados en la base de datos.
+        - [x] Completado el motor de análisis del backend (criterio de altitud, clasificación granular).
+        - [x] Andamiaje de la aplicación frontend con React y TypeScript.
+        - [x] Instalación de Leaflet.
+        - [x] Configuración del entorno de desarrollo Docker para el frontend.
+        - [x] Depuración y resolución de la corrupción de `npm audit fix --force`.
+        - [x] Depuración y resolución de la incompatibilidad de la versión de Node.js (`ERR_OSSL_EVP_UNSUPPORTED`).
+        - [x] Depuración y resolución de problemas de compatibilidad de `react-leaflet-draw` (decisión de eliminarlo).
+        - [x] Depuración y resolución de conflictos de versión de `react` / `react-dom`.
+        - [x] Depuración y resolución de conflictos de versión de `react-scripts`.
+        - [x] Depuración y resolución del error `ReactDOM.render is not a function`.
+        - [ ] Renderizado exitoso del mapa base en el frontend.
+        - [ ] Integración directa de `leaflet-draw`.
+    - **Posición Actual:** Nos encontramos en la Fase 3, con el entorno de desarrollo del frontend configurado, pero la aplicación React aún no se renderiza correctamente debido a un error en `react-leaflet` (`div-overlay.js`).
     - **Siguiente Tarea Inmediata:**
-        - [ ] Añadir el criterio de **elevación** al algoritmo de análisis en `analysis/core.py`.
+        - [ ] Diagnosticar y resolver el error `at ./node_modules/@react-leaflet/core/lib/div-overlay.js` en el frontend.
+        - [ ] Eliminar la corrección de los iconos de Leaflet de `Map.tsx` (propuesta pendiente).
+        - [ ] Integrar `leaflet-draw` directamente en `Map.tsx`.
     - **Bloqueos o Dudas:**
-        - [ ] Ninguno.
+        - [x] Persistente error en el frontend relacionado con `react-leaflet` y `div-overlay.js` después de múltiples intentos de resolución de dependencias.
 
 ---
 
@@ -165,3 +171,4 @@ Esta sección documenta las mejoras estratégicas que se han identificado durant
 - **Integración de Datos Reales:** El sistema debe evolucionar para reemplazar los archivos de datos de muestra por un "Módulo de Adquisición de Datos" que se conecte a servicios externos y APIs (WMS, WCS, etc.) para obtener datos en tiempo real.
 - **Suite de Pruebas Formal:** El script de prueba actual debe expandirse hasta convertirse en una suite de pruebas formal utilizando el framework de testing de Django, con una clara separación entre pruebas unitarias (para la lógica del motor) y pruebas de integración (para la API).
 - **Refinamiento del Algoritmo:** El algoritmo de clasificación debe ser mejorado para incluir más criterios y para generar una clasificación más granular (ej. 'ALTO', 'MEDIO', 'BAJO') en lugar de un resultado binario.
+- **Deuda Técnica Frontend:** Actualizar `react-scripts` a la versión 5 (y Webpack 5) y asegurar la compatibilidad de todas las dependencias con React 18/19 para eliminar la necesidad de la variable de entorno `NODE_OPTIONS=--openssl-legacy-provider`.

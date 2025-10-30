@@ -16,6 +16,8 @@ SOIL_FILE = "analysis/data/sample_soil.geojson"
 # --- Analysis Parameters ---
 SLOPE_THRESHOLD_DEGREES = 20.0
 SUITABLE_SOILS = ["Silt", "Loam"]
+ALTITUDE_MIN_METERS = 0.0
+ALTITUDE_MAX_METERS = 55.0
 
 
 def execute_analysis(analysis_request_id: int):
@@ -68,10 +70,25 @@ def execute_analysis(analysis_request_id: int):
             soil_suitability = np.isin(rasterized_soil, suitable_soil_ids)
             print(f"Found {np.sum(soil_suitability)} suitable pixels based on soil type.")
 
+            # 3c. Altitude Analysis
+            print("\n--- CRITERIA 3: ALTITUDE ---")
+            # The DEM itself represents altitude
+            altitude_suitability = np.logical_and(
+                clipped_dem >= ALTITUDE_MIN_METERS,
+                clipped_dem <= ALTITUDE_MAX_METERS
+            )
+            print(f"Altitude calculated. Min: {clipped_dem.min():.2f}, Max: {clipped_dem.max():.2f} meters")
+            print(f"Found {np.sum(altitude_suitability)} suitable pixels based on altitude.")
+
             # 4. Combine Criteria
             print("\n--- COMBINING CRITERIA ---")
-            final_suitability = np.logical_and(slope_suitability, soil_suitability)
-            print(f"Found {np.sum(final_suitability)} suitable pixels after combining all criteria.")
+            # Convert boolean masks to integer (0 or 1) and sum them to get a score
+            combined_score = (
+                slope_suitability.astype(np.int8) +
+                soil_suitability.astype(np.int8) +
+                altitude_suitability.astype(np.int8)
+            )
+            print(f"Combined criteria into a score raster (0-3). Max score found: {combined_score.max()}")
 
             # 5. Vectorize and Save Results
             print("\n--- SAVING RESULTS ---")
@@ -79,24 +96,35 @@ def execute_analysis(analysis_request_id: int):
             AnalysisResult.objects.filter(request=request).delete()
             print("Cleared old results.")
 
-            # Extract shapes (polygons) from the final suitability raster
+            # Define the mapping from score to viability level
+            score_to_level = {
+                3: 'HIGH',
+                2: 'MEDIUM',
+                1: 'LOW'
+            }
+
+            # Extract shapes (polygons) from the combined score raster
+            # We only want to vectorize areas that meet at least one criterion (score > 0)
             result_shapes = features.shapes(
-                final_suitability.astype(rasterio.uint8), 
-                mask=final_suitability, 
+                combined_score.astype(rasterio.int16), # features.shapes requires integer type
+                mask=(combined_score > 0),
                 transform=clipped_transform
             )
 
-            # Save each shape as a new AnalysisResult object
+            # Save each shape with its corresponding viability level
             results_saved = 0
-            for geom, value in result_shapes:
-                if value == 1: # Value 1 means suitable
+            for geom, score_val in result_shapes:
+                score = int(score_val)
+                viability_level = score_to_level.get(score)
+
+                if viability_level:
                     # Convert the GeoJSON-like dict to a GEOS-compatible geometry
                     result_poly = GEOSGeometry(str(shape(geom)))
-                    
+
                     AnalysisResult.objects.create(
                         request=request,
                         result_area=result_poly,
-                        viability_level='HIGH' # Placeholder
+                        viability_level=viability_level
                     )
                     results_saved += 1
             print(f"Saved {results_saved} new result polygons to the database.")
@@ -109,3 +137,4 @@ def execute_analysis(analysis_request_id: int):
         return
 
     # ...
+
