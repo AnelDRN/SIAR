@@ -44,16 +44,21 @@ class SpeciesSerializer(serializers.ModelSerializer):
             "description",
         )
 
-class AnalysisResultSerializer(GeoFeatureModelSerializer):
+from rest_framework_gis.serializers import GeoFeatureModelSerializer, GeometryField
+
+
+class AnalysisResultSerializer(serializers.ModelSerializer):
     """
-    Serializer for the AnalysisResult model, using GeoJSON features.
+    Serializer for the AnalysisResult model.
     """
+    recommended_species = SpeciesSerializer(many=True, read_only=True)
+
     class Meta:
         model = AnalysisResult
-        geo_field = "result_area"
         fields = (
             "id",
             "request",
+            "result_area",
             "viability_level",
             "recommended_species",
         )

@@ -5,9 +5,10 @@ from rasterio import features
 from shapely.geometry import mapping, shape
 from shapely.wkt import loads
 import numpy as np
+import random
 
 from django.contrib.gis.geos import GEOSGeometry
-from .models import AnalysisRequest, AnalysisResult
+from .models import AnalysisRequest, AnalysisResult, Species
 
 # Define constants for the data files
 DEM_FILE = "analysis/data/sample_dem.tif"
@@ -31,6 +32,7 @@ def execute_analysis(analysis_request_id: int):
         # Convert the GeoDjango polygon to a Shapely polygon for processing
         area_of_interest = loads(request.area_of_interest.wkt)
         print(f" -> Loaded Area of Interest: {area_of_interest.wkt[:80]}...")
+        print(f" -> Area of Interest Bounds: {area_of_interest.bounds}")
 
         # 2. Load & Preprocess Data
         soil_gdf = geopandas.read_file(SOIL_FILE)
@@ -40,6 +42,7 @@ def execute_analysis(analysis_request_id: int):
 
         with rasterio.open(DEM_FILE) as dem_src:
             print(f" -> Loaded DEM: {DEM_FILE} with CRS {dem_src.crs}")
+            print(f" -> DEM Bounds: {dem_src.bounds}")
             
             # Clip the DEM to the area of interest
             print("Clipping data to Area of Interest...")
@@ -103,6 +106,9 @@ def execute_analysis(analysis_request_id: int):
                 1: 'LOW'
             }
 
+            # Fetch all available species once
+            all_species = list(Species.objects.all())
+
             # Extract shapes (polygons) from the combined score raster
             # We only want to vectorize areas that meet at least one criterion (score > 0)
             result_shapes = features.shapes(
@@ -121,11 +127,18 @@ def execute_analysis(analysis_request_id: int):
                     # Convert the GeoJSON-like dict to a GEOS-compatible geometry
                     result_poly = GEOSGeometry(str(shape(geom)))
 
-                    AnalysisResult.objects.create(
+                    analysis_result = AnalysisResult.objects.create(
                         request=request,
                         result_area=result_poly,
                         viability_level=viability_level
                     )
+
+                    # If HIGH viability, recommend some random species
+                    if viability_level == 'HIGH' and all_species:
+                        num_species_to_recommend = random.randint(1, min(3, len(all_species)))
+                        recommended = random.sample(all_species, num_species_to_recommend)
+                        analysis_result.recommended_species.set(recommended)
+
                     results_saved += 1
             print(f"Saved {results_saved} new result polygons to the database.")
 

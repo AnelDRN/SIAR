@@ -10,20 +10,19 @@ services:
     volumes:
       - ./backend:/app
     depends_on:
-      - database
+      database:
+        condition: service_healthy
 
   frontend:
     build: ./frontend
     ports:
-      - "3000:3000"
+      - "5173:5173"
     volumes:
       - ./frontend:/app
       - /app/node_modules
-    stdin_open: true
-    tty: true
     environment:
-      - NODE_OPTIONS=--openssl-legacy-provider
-    command: sh -c "npm install && npm start"
+      - CHOKIDAR_USEPOLLING=true
+      - REACT_APP_API_URL=http://localhost:8000
     depends_on:
       - backend
 
@@ -37,6 +36,11 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data/
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U siar_user -d siar_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
 volumes:
   postgres_data:

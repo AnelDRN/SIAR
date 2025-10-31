@@ -1,13 +1,18 @@
-import React from 'react';
-import './App.css';
-import Map from './Map';
+import './App.css'
+import MapView from './components/MapView'
 
 function App() {
+
   return (
     <div className="App">
-      <Map />
+      <header>
+        <h1>Sistema SIAR - Mapa de Viabilidad</h1>
+      </header>
+      <main>
+        <MapView />
+      </main>
     </div>
-  );
+  )
 }
 
-export default App;
+export default App
