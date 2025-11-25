@@ -7,18 +7,9 @@ from shapely.wkt import loads
 import numpy as np
 import random
 
+from django.conf import settings
 from django.contrib.gis.geos import GEOSGeometry
 from .models import AnalysisRequest, AnalysisResult, Species
-
-# Define constants for the data files
-DEM_FILE = "analysis/data/sample_dem.tif"
-SOIL_FILE = "analysis/data/sample_soil.geojson"
-
-# --- Analysis Parameters ---
-SLOPE_THRESHOLD_DEGREES = 20.0
-SUITABLE_SOILS = ["Silt", "Loam"]
-ALTITUDE_MIN_METERS = 0.0
-ALTITUDE_MAX_METERS = 55.0
 
 
 def execute_analysis(analysis_request_id: int):
@@ -35,13 +26,13 @@ def execute_analysis(analysis_request_id: int):
         print(f" -> Area of Interest Bounds: {area_of_interest.bounds}")
 
         # 2. Load & Preprocess Data
-        soil_gdf = geopandas.read_file(SOIL_FILE)
-        print(f" -> Loaded Soil Map: {SOIL_FILE} with CRS {soil_gdf.crs}")
+        soil_gdf = geopandas.read_file(settings.SOIL_FILE_PATH)
+        print(f" -> Loaded Soil Map: {settings.SOIL_FILE_PATH} with CRS {soil_gdf.crs}")
         clipped_soil = geopandas.clip(soil_gdf, area_of_interest)
         print(f" -> Soil map clipped. New feature count: {len(clipped_soil)}")
 
-        with rasterio.open(DEM_FILE) as dem_src:
-            print(f" -> Loaded DEM: {DEM_FILE} with CRS {dem_src.crs}")
+        with rasterio.open(settings.DEM_FILE_PATH) as dem_src:
+            print(f" -> Loaded DEM: {settings.DEM_FILE_PATH} with CRS {dem_src.crs}")
             print(f" -> DEM Bounds: {dem_src.bounds}")
             
             # Clip the DEM to the area of interest
@@ -57,7 +48,7 @@ def execute_analysis(analysis_request_id: int):
             slope_rad = np.arctan(np.sqrt(gradient_x**2 + gradient_y**2))
             slope_deg = np.degrees(slope_rad)
             print(f"Slope calculated. Min: {slope_deg.min():.2f}, Max: {slope_deg.max():.2f} degrees")
-            slope_suitability = slope_deg < SLOPE_THRESHOLD_DEGREES
+            slope_suitability = slope_deg < settings.SLOPE_THRESHOLD_DEGREES
             print(f"Found {np.sum(slope_suitability)} suitable pixels based on slope.")
 
             # 3b. Soil Analysis
@@ -69,7 +60,7 @@ def execute_analysis(analysis_request_id: int):
             print(f"Soil map rasterized.")
 
             # Create a boolean mask for suitable soils
-            suitable_soil_ids = [soil_types[s] for s in SUITABLE_SOILS if s in soil_types]
+            suitable_soil_ids = [soil_types[s] for s in settings.SUITABLE_SOILS if s in soil_types]
             soil_suitability = np.isin(rasterized_soil, suitable_soil_ids)
             print(f"Found {np.sum(soil_suitability)} suitable pixels based on soil type.")
 
@@ -77,8 +68,8 @@ def execute_analysis(analysis_request_id: int):
             print("\n--- CRITERIA 3: ALTITUDE ---")
             # The DEM itself represents altitude
             altitude_suitability = np.logical_and(
-                clipped_dem >= ALTITUDE_MIN_METERS,
-                clipped_dem <= ALTITUDE_MAX_METERS
+                clipped_dem >= settings.ALTITUDE_MIN_METERS,
+                clipped_dem <= settings.ALTITUDE_MAX_METERS
             )
             print(f"Altitude calculated. Min: {clipped_dem.min():.2f}, Max: {clipped_dem.max():.2f} meters")
             print(f"Found {np.sum(altitude_suitability)} suitable pixels based on altitude.")

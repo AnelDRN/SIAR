@@ -4,12 +4,22 @@ class AnalysisRequest(models.Model):
     """
     Represents a single analysis request initiated by a user.
     """
+    class StatusChoices(models.TextChoices):
+        PENDING = 'PENDING', 'Pending'
+        IN_PROGRESS = 'IN_PROGRESS', 'In Progress'
+        COMPLETED = 'COMPLETED', 'Completed'
+        FAILED = 'FAILED', 'Failed'
+
     area_of_interest = models.PolygonField()
     created_at = models.DateTimeField(auto_now_add=True)
-    status = models.CharField(max_length=20, default='PENDING')
+    status = models.CharField(
+        max_length=20,
+        choices=StatusChoices.choices,
+        default=StatusChoices.PENDING
+    )
 
     def __str__(self):
-        return f"AnalysisRequest {self.request_id} - {self.status}"
+        return f"AnalysisRequest {self.id} - {self.status}"
 
 class Species(models.Model):
     """

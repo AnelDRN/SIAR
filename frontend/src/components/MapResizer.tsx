@@ -5,7 +5,12 @@ const MapResizer: React.FC = () => {
   const map = useMap();
 
   useEffect(() => {
-    map.invalidateSize();
+    const timer = setTimeout(() => {
+      map.invalidateSize();
+    }, 100);
+
+    // Cleanup the timer if the component unmounts
+    return () => clearTimeout(timer);
   }, [map]);
 
   return null;

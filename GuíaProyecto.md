@@ -1,7 +1,7 @@
 # **Documento Guía del Proyecto: Sistema de Identificación de Áreas para Reforestación (SIAR)**
 
-**Versión:** 1.2
-**Fecha:** 21 de Octubre de 2025
+**Versión:** 1.3
+**Fecha:** 22 de Noviembre de 2025 (Actualizada)
 
 **Instrucciones para el Asistente de IA (Gemini CLI)**
 - Este documento es la referencia principal y la **única fuente de verdad** para el "Proyecto SIAR".
@@ -62,16 +62,28 @@
 - **Frontend:** React
 - **Visualización de Mapas:** Leaflet.js
 - **Base de Datos:** PostgreSQL con extensión PostGIS
-- **Análisis Geoespacial (Python):** GeoPandas, Rasterio, GDAL, NumPy, Shapely
+- **Análisis Geoespacial (Python):** GeoPandas, Rasterio, GDAL, NumPy, Shapely, **OWSLib**
 - **Entorno de Desarrollo:** Docker
+- **UI Framework Frontend:** **Material-UI (MUI)**
 
 ---
 
 **Sección 6: Arquitectura del Sistema (Simplificada)**
 
-1.  **Frontend (React + Leaflet):** Usuario dibuja un polígono. Envía coordenadas vía API REST al backend.
-2.  **Backend (Django + PostGIS):** Recibe el polígono, invoca al módulo de análisis (`core.py`) para procesar los datos, y expone los resultados en la API.
-3.  **Frontend:** Recibe los datos y los renderiza en el mapa.
+1.  **Frontend (React + Leaflet + MUI):**
+    *   Usuario define un polígono.
+    *   Envía coordenadas vía API REST al backend.
+    *   Gestiona el estado del análisis de forma asíncrona (envío, polling de estado, recepción de resultados).
+    *   Renderiza el mapa base, las herramientas de dibujo, el polígono seleccionado y los resultados del análisis.
+2.  **Backend (Django + PostGIS + Celery/Redis):**
+    *   Recibe el polígono.
+    *   Delegada la invocación del módulo de análisis (`core.py`) a una cola de tareas asíncrona (Celery con Redis como broker).
+    *   Expone el estado del análisis y los resultados finales vía API REST.
+3.  **Módulo de Análisis Geoespacial (`core.py`):**
+    *   Ejecutado por el worker de Celery.
+    *   Procesa variables críticas (actualmente de datos de muestra) para el área seleccionada.
+    *   Almacena los resultados en PostGIS.
+    *   Lee la configuración desde variables de entorno (`django-environ`).
 
 ---
 
@@ -81,6 +93,7 @@
 - **SIG:** Sistema de Información Geográfica.
 - **DEM:** Digital Elevation Model.
 - **Especie Nativa:** Especie que pertenece a una región de forma natural.
+- **WCS:** Web Coverage Service, estándar OGC para acceder a datos raster geoespaciales.
 
 ---
 
@@ -153,7 +166,7 @@
         - [x] Depuración y resolución del error `ReactDOM.render is not a function`.
         - [ ] Renderizado exitoso del mapa base en el frontend.
         - [ ] Integración directa de `leaflet-draw`.
-    - **Posición Actual:** Nos encontramos en la Fase 3, con el entorno de desarrollo del frontend configurado, pero la aplicación React aún no se renderiza correctamente debido a un error en `react-leaflet` (`div-overlay.js`).
+    - **Posición Actual:** Nos encontramos en la Fase 3, con el entorno de desarrollo del frontend configurado, pero la aplicación React aún no se renderiza correctamente debido a un un error en `react-leaflet` (`div-overlay.js`).
     - **Siguiente Tarea Inmediata:**
         - [ ] Diagnosticar y resolver el error `at ./node_modules/@react-leaflet/core/lib/div-overlay.js` en el frontend.
         - [ ] Eliminar la corrección de los iconos de Leaflet de `Map.tsx` (propuesta pendiente).
@@ -193,12 +206,57 @@
 
 ---
 
+- **Resumen de la Sesión del 22 de Noviembre de 2025:**
+    - **Resumen Ejecutivo:** Sesión enfocada en la profesionalización del proyecto. Se refactorizó el backend para usar tareas asíncronas con Celery/Redis y se externalizó la configuración usando `django-environ`. Se ampliaron las pruebas del backend, incluyendo un test de integración para el algoritmo de análisis. El frontend se adaptó para manejar la API asíncrona, refactorizando componentes clave y mejorando la UI/UX con Material-UI. La sesión se vio afectada por problemas persistentes de sincronización de Docker en el entorno del usuario, lo que requirió la eliminación del montaje de volumen del frontend y un proceso de depuración exhaustivo.
+    - **Hoja de Ruta del Proyecto (MVP):**
+        - **Fase 0:** Configuración del Entorno y Esqueleto [Completada]
+        - **Fase 1:** Modelo de Datos y Creación de la API [Completada]
+        - **Fase 2:** Implementación del Núcleo de Análisis Geoespacial [Completada]
+        - **Fase 3:** Desarrollo del Frontend y Visualización de Mapa [Completada]
+        - **Fase 4:** Integración Completa y Visualización de Resultados [Completada]
+    - **Hitos Clave de la Sesión:**
+        - **Backend:**
+            - [x] Añadida dependencia `celery` y `redis` a `backend/requirements.txt`.
+            - [x] Actualizado `docker-compose.yml` para incluir servicios de `redis` y `celery_worker`.
+            - [x] Configurado Celery en el proyecto Django.
+            - [x] Creado `backend/analysis/tasks.py` con tarea Celery para `execute_analysis`.
+            - [x] Modificado `AnalysisRequest` para incluir campo `status` y corregido `__str__` (usando `id` en lugar de `request_id`).
+            - [x] Aplicadas migraciones de base de datos para el campo `status`.
+            - [x] Actualizado `AnalysisRequestViewSet` para disparar la tarea Celery asíncronamente.
+            - [x] Externalizada la configuración de `core.py` a variables de entorno usando `django-environ`.
+            - [x] Creados archivos `.env` y `.env.example` en el backend.
+            - [x] Actualizado `backend/backend/settings.py` para usar `django-environ` y leer parámetros de análisis.
+            - [x] Refactorizado `backend/analysis/core.py` para usar la configuración de Django.
+            - [x] Actualizado `docker-compose.yml` para pasar el `.env` a los servicios `backend` y `celery_worker`.
+            - [x] Añadida suite de pruebas de integración para la lógica de análisis en `backend/analysis/tests.py`.
+        - **Frontend:**
+            - [x] Adaptado el frontend para manejar el flujo asíncrono del backend (polling de estado).
+            - [x] Refactorizado `MapView.tsx` para usar un nuevo hook `useAnalysis.ts` y componentes dedicados (`StatusOverlay`, `AnalysisLayer`).
+            - [x] Mejorada la UI/UX con Material-UI (MUI), incluyendo `Layout.tsx` e `InfoPanel.tsx`.
+            - [x] Depurados problemas de renderizado del mapa (`ERR_EMPTY_RESPONSE`, fondo negro) causados por la configuración de Vite y problemas de sincronización de volúmenes de Docker.
+            - [x] Corregido el acceso a `status` en el frontend (buscando en `response.data.properties.status`).
+            - [x] Solucionados conflictos de sintaxis de `Grid` de MUI (MUI v1 vs v2).
+            - [x] Eliminado el montaje de volumen del frontend (`./frontend:/app`) en `docker-compose.yml` para resolver problemas de sincronización de archivos, copiando el código directamente en la imagen Docker en la construcción.
+            - [x] Revertido `App.tsx` al layout de Flexbox con `<Box>` para garantizar la estabilidad de la visualización del mapa, sacrificando temporalmente el layout de `Grid` de MUI debido a problemas persistentes de compatibilidad de renderizado.
+    - **Posición Actual:**
+        - El proyecto es un MVP funcional y estable.
+        - El backend ha sido profesionalizado con tareas asíncronas, configuración externa y pruebas de integración.
+        - El frontend ha sido profesionalizado para manejar el flujo asíncrono y presenta una UI mejorada con Material-UI, utilizando un layout flexible (`Box`).
+        - La visualización del mapa es funcional.
+    - **Siguiente Tarea Inmediata:**
+        - [ ] **Integración de Datos Reales:** Investigar y conectar fuentes de datos geoespaciales (WCS) para la precipitación media anual y el uso del suelo.
+    - **Bloqueos o Dudas:**
+        - [ ] La integración de datos reales es una tarea compleja que requerirá una investigación exhaustiva de las APIs y formatos de datos disponibles.
+
+---
+
 **Sección 9: Mejoras Futuras y Hoja de Ruta Post-MVP**
 
 Esta sección documenta las mejoras estratégicas que se han identificado durante el desarrollo del MVP para ser consideradas en futuras versiones del proyecto.
 
-- **Tareas Asíncronas:** La ejecución del análisis (`execute_analysis`) debe ser delegada a una cola de tareas en segundo plano (ej. Celery, Django-Q) para evitar que peticiones de larga duración bloqueen la API.
-- **Integración de Datos Reales:** El sistema debe evolucionar para reemplazar los archivos de datos de muestra por un "Módulo de Adquisición de Datos" que se conecte a servicios externos y APIs (WMS, WCS, etc.) para obtener datos en tiempo real.
-- **Suite de Pruebas Formal:** El script de prueba actual debe expandirse hasta convertirse en una suite de pruebas formal utilizando el framework de testing de Django, con una clara separación entre pruebas unitarias (para la lógica del motor) y pruebas de integración (para la API).
-- **Refinamiento del Algoritmo:** El algoritmo de clasificación debe ser mejorado para incluir más criterios y para generar una clasificación más granular (ej. 'ALTO', 'MEDIO', 'BAJO') en lugar de un resultado binario.
-- **Deuda Técnica Frontend:** Actualizar `react-scripts` a la versión 5 (y Webpack 5) y asegurar la compatibilidad de todas las dependencias con React 18/19 para eliminar la necesidad de la variable de entorno `NODE_OPTIONS=--openssl-legacy-provider`.
+- **Integración de Datos Reales (WCS):** Reemplazar los archivos de datos de muestra por un "Módulo de Adquisición de Datos" que se conecte a servicios WCS/APIs externas para obtener datos geoespaciales en tiempo real (o casi real). Esta es la **siguiente fase prioritaria**.
+- **Refinamiento del Algoritmo:** El algoritmo de clasificación actual (basado en 3 o 4 criterios con puntuación simple) debe ser mejorado para incluir más criterios (hasta 5 o más) y para generar una clasificación más granular o ponderada.
+- **Suite de Pruebas Formal:** Expandir la suite de pruebas para incluir pruebas de UI/integración del frontend, así como más pruebas unitarias y de estrés para el backend y el módulo de análisis.
+- **Mejora del Layout de UI:** Explorar opciones para reintroducir un layout más sofisticado (como el `Grid` de MUI) si fuera necesario, una vez que la estabilidad del mapa con el layout actual esté garantizada y el tiempo lo permita.
+- **Optimización de Rendimiento:** Optimizar las consultas a la base de datos y el procesamiento geoespacial para grandes áreas.
+- **Manejo de Errores Robustos:** Implementar un manejo de errores más sofisticado tanto en el frontend como en el backend, con logging y notificación.

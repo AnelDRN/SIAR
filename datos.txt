@@ -1,0 +1,20 @@
+Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+App.tsx:21 Uncaught ReferenceError: ForceRefresh is not defined
+    at App (App.tsx:21:8)
+App.tsx:21 Uncaught ReferenceError: ForceRefresh is not defined
+    at App (App.tsx:21:8)
+chunk-NUMECXU6.js?v=97237c27:14032 The above error occurred in the <App> component:
+
+    at App (http://localhost:5173/src/App.tsx:27:49)
+    at DefaultPropsProvider (http://localhost:5173/node_modules/.vite/deps/chunk-3D7XYEAX.js?v=97237c27:6143:3)
+    at RtlProvider (http://localhost:5173/node_modules/.vite/deps/chunk-3D7XYEAX.js?v=97237c27:6119:3)
+    at ThemeProvider2 (http://localhost:5173/node_modules/.vite/deps/chunk-3D7XYEAX.js?v=97237c27:6075:5)
+    at ThemeProvider3 (http://localhost:5173/node_modules/.vite/deps/chunk-3D7XYEAX.js?v=97237c27:6295:5)
+    at ThemeProviderNoVars (http://localhost:5173/node_modules/.vite/deps/chunk-ELW3OA26.js?v=97237c27:277:10)
+    at ThemeProvider (http://localhost:5173/node_modules/.vite/deps/chunk-ELW3OA26.js?v=97237c27:426:3)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+chunk-NUMECXU6.js?v=97237c27:19413 Uncaught ReferenceError: ForceRefresh is not defined
+    at App (App.tsx:21:8)
+3

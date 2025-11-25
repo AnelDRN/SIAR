@@ -6,7 +6,7 @@ from .models import AnalysisRequest, Species, AnalysisResult
 from .serializers import (
     AnalysisRequestSerializer, SpeciesSerializer, AnalysisResultSerializer
 )
-from .core import execute_analysis
+from .tasks import run_analysis_task
 
 
 class AnalysisRequestViewSet(viewsets.ModelViewSet):
@@ -17,16 +17,16 @@ class AnalysisRequestViewSet(viewsets.ModelViewSet):
     serializer_class = AnalysisRequestSerializer
 
     def perform_create(self, serializer):
-        """Overrides the default create behavior to trigger the analysis."""
-        # First, save the request to get an ID
-        super().perform_create(serializer)
+        """
+        Overrides the default create behavior to trigger the analysis
+        asynchronously.
+        """
+        # Save the request instance first to get an ID.
+        instance = serializer.save()
 
-        # TODO: In a production environment, this should be offloaded to a
-        # background task queue (e.g., Celery, Django-Q) to avoid blocking
-        # the API response.
-        instance = serializer.instance
-        print(f"AnalysisRequest {instance.id} created. Triggering analysis...")
-        execute_analysis(instance.id)
+        # Trigger the analysis in the background using Celery.
+        print(f"AnalysisRequest {instance.id} created. Triggering background analysis...")
+        run_analysis_task.delay(instance.id)
 
 
 class SpeciesViewSet(viewsets.ReadOnlyModelViewSet):
