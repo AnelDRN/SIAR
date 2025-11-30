@@ -8,3 +8,8 @@ djangorestframework-gis
 celery
 redis
 django-environ
+owslib
+lxml
+bmi-topography
+soilgrids
+requests

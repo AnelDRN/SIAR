@@ -1,0 +1,5 @@
+# 1. Ignorar el archivo de datos grande que Git no puede manejar
+backend/analysis/data/worldclim/wc2.1_30s_prec.zip
+
+# 2. Ignorar la carpeta de node_modules porque Docker la crea automáticamente
+frontend/node_modules/

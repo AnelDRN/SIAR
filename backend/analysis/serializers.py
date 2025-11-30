@@ -21,14 +21,7 @@ class AnalysisRequestSerializer(GeoFeatureModelSerializer):
         )
         read_only_fields = ("status", "created_at")
 
-    def create(self, validated_data):
-        """Handle the creation of a new AnalysisRequest from GeoJSON data."""
-        area_of_interest_data = validated_data.pop("area_of_interest")
-        # Convert the GeoJSON dict to a GEOSGeometry object
-        geom = GEOSGeometry(json.dumps(area_of_interest_data))
 
-        # Create the AnalysisRequest instance
-        return AnalysisRequest.objects.create(area_of_interest=geom, **validated_data)
 
 
 class SpeciesSerializer(serializers.ModelSerializer):
@@ -47,18 +40,23 @@ class SpeciesSerializer(serializers.ModelSerializer):
 from rest_framework_gis.serializers import GeoFeatureModelSerializer, GeometryField
 
 
-class AnalysisResultSerializer(serializers.ModelSerializer):
+class AnalysisResultSerializer(GeoFeatureModelSerializer):
     """
-    Serializer for the AnalysisResult model.
+    Serializer for the AnalysisResult model. Will be serialized as a GeoJSON Feature.
     """
     recommended_species = SpeciesSerializer(many=True, read_only=True)
 
     class Meta:
         model = AnalysisResult
+        geo_field = "result_area"
         fields = (
             "id",
             "request",
-            "result_area",
+            "result_area", # This field is required for the geometry
             "viability_level",
+            "slope_suitability",
+            "soil_suitability",
+            "altitude_suitability",
+            "precipitation_suitability",
             "recommended_species",
         )

@@ -27,7 +27,7 @@ SECRET_KEY = env('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env('DEBUG')
 
-ALLOWED_HOSTS = ['testserver', 'backend']
+ALLOWED_HOSTS = ['testserver', 'backend', 'localhost']
 
 
 # Application definition
@@ -44,6 +44,7 @@ INSTALLED_APPS = [
 
     # Third-Party Apps
     'rest_framework',
+    'rest_framework_gis',
 
     # Project Apps
     'analysis',
@@ -135,11 +136,62 @@ CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TIMEZONE = 'UTC'
 
 
-# SIAR Analysis Parameters
-# --------------------------
-DEM_FILE_PATH = env('DEM_FILE_PATH')
-SOIL_FILE_PATH = env('SOIL_FILE_PATH')
+
+
+# SIAR Data Sources & Analysis Parameters
+# ---------------------------------------
+# Local data paths
+PRECIPITATION_DATA_DIR = env('PRECIPITATION_DATA_DIR')
+
+# Web Coverage Service (WCS) endpoints and layer IDs
+LAND_COVER_WCS_URL = env('LAND_COVER_WCS_URL')
+LAND_COVER_COVERAGE_ID = env('LAND_COVER_COVERAGE_ID')
+
+# REST API endpoint for biodiversity data
+GBIF_API_URL = env('GBIF_API_URL')
+
+# API Key for OpenTopography
+OPENTOPOGRAPHY_API_KEY = env('OPENTOPOGRAPHY_API_KEY', default=None)
+
+# Analysis algorithm thresholds
 SLOPE_THRESHOLD_DEGREES = env.float('SLOPE_THRESHOLD_DEGREES')
-SUITABLE_SOILS = env.list('SUITABLE_SOILS')
 ALTITUDE_MIN_METERS = env.float('ALTITUDE_MIN_METERS')
 ALTITUDE_MAX_METERS = env.float('ALTITUDE_MAX_METERS')
+SOIL_SILT_MIN_PERCENT = env.float('SOIL_SILT_MIN_PERCENT')
+SOIL_CLAY_MAX_PERCENT = env.float('SOIL_CLAY_MAX_PERCENT')
+SUITABLE_LAND_COVER_IDS = env.list('SUITABLE_LAND_COVER_IDS', cast=int)
+PRECIPITATION_MIN_MM = env.float('PRECIPITATION_MIN_MM')
+PRECIPITATION_MAX_MM = env.float('PRECIPITATION_MAX_MM')
+MAX_AREA_FOR_TILING = env.float('MAX_AREA_FOR_TILING', default=10000)
+
+# Data Provider Configuration
+# ---------------------------
+DATA_PROVIDERS = {
+    'dem': 'analysis.data_acquisition.OpenTopographyDEMProvider',
+    'soil': 'analysis.data_acquisition.SoilGridsProvider',
+    'precipitation': 'analysis.data_acquisition.LocalFilePrecipitationProvider',
+    'species': 'analysis.data_acquisition.GBIFAPIProvider',
+}
+
+# Logging Configuration
+# ---------------------
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'INFO',
+    },
+    'loggers': {
+        'analysis': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+    },
+}

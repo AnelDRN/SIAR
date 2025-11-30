@@ -22,8 +22,8 @@ class Command(BaseCommand):
         }
 
         # Clear any old results to ensure a clean test
-        AnalysisRequest.objects.all().delete()
         AnalysisResult.objects.all().delete()
+        AnalysisRequest.objects.all().delete()
         self.stdout.write("Cleared old test data from the database.")
 
         self.stdout.write("\n--- Sending POST request to /api/v1/analysis-requests/ ---")

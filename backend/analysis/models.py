@@ -45,7 +45,14 @@ class AnalysisResult(models.Model):
     request = models.ForeignKey(AnalysisRequest, on_delete=models.CASCADE, related_name='results')
     result_area = models.PolygonField()
     viability_level = models.CharField(max_length=10, choices=VIABILITY_LEVELS)
+    
+    # Individual criteria scores
+    slope_suitability = models.BooleanField(default=False)
+    soil_suitability = models.BooleanField(default=False)
+    altitude_suitability = models.BooleanField(default=False)
+    precipitation_suitability = models.BooleanField(default=False)
+
     recommended_species = models.ManyToManyField(Species, blank=True)
 
     def __str__(self):
-        return f"Result for Request {self.request.request_id} - {self.get_viability_level_display()}"
+        return f"Result for Request {self.request.id} - {self.get_viability_level_display()}"

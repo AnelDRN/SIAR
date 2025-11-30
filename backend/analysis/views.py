@@ -40,6 +40,7 @@ class SpeciesViewSet(viewsets.ReadOnlyModelViewSet):
 class AnalysisResultViewSet(viewsets.ReadOnlyModelViewSet):
     """
     A simple ViewSet for viewing analysis results.
+    The serializer is configured to automatically return a GeoJSON FeatureCollection.
     """
     serializer_class = AnalysisResultSerializer
 
@@ -47,31 +48,11 @@ class AnalysisResultViewSet(viewsets.ReadOnlyModelViewSet):
         """
         Optionally restricts the returned results to a given analysis request,
         by filtering against a `request_id` query parameter in the URL.
+
+        Also, pre-fetches related species to optimize performance.
         """
-        queryset = AnalysisResult.objects.all()
+        queryset = AnalysisResult.objects.all().prefetch_related('recommended_species')
         request_id = self.request.query_params.get('request_id')
         if request_id is not None:
             queryset = queryset.filter(request__id=request_id)
         return queryset
-
-    def list(self, request, *args, **kwargs):
-        queryset = self.get_queryset()
-        serializer = self.get_serializer(queryset, many=True)
-        features = []
-        for item in serializer.data:
-            geom = GEOSGeometry(item['result_area'])
-            features.append({
-                'type': 'Feature',
-                'geometry': json.loads(geom.geojson),
-                'properties': {
-                    'request': item['request'],
-                    'viability_level': item['viability_level'],
-                    'recommended_species': item['recommended_species'],
-                },
-                'id': item['id'],
-            })
-
-        return Response({
-            'type': 'FeatureCollection',
-            'features': features
-        })

@@ -1,0 +1,18 @@
+/* Custom Scrollbar for Webkit browsers */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #2e2e2e; /* A slightly lighter shade than the main background */
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #555; /* A mid-range grey */
+  border-radius: 4px;
+  border: 2px solid #2e2e2e; /* Creates a padding effect */
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: #777; /* Lighter grey on hover */
+}

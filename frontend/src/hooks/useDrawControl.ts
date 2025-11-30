@@ -2,12 +2,16 @@ import { useEffect } from 'react';
 import L from 'leaflet';
 import 'leaflet-draw';
 
-export const useDrawControl = (map: L.Map | null, onPolygonCreated: (layer: L.Layer) => void) => {
-  useEffect(() => {
-    if (!map) return;
+interface UseDrawControlOptions {
+  map: L.Map | null;
+  featureGroup: L.FeatureGroup | null;
+  onPolygonCreated: (layer: L.Layer) => void;
+  onClear: () => void;
+}
 
-    const drawnItems = new L.FeatureGroup();
-    map.addLayer(drawnItems);
+export const useDrawControl = ({ map, featureGroup, onPolygonCreated, onClear }: UseDrawControlOptions) => {
+  useEffect(() => {
+    if (!map || !featureGroup) return;
 
     const drawControl = new L.Control.Draw({
       draw: {
@@ -16,25 +20,38 @@ export const useDrawControl = (map: L.Map | null, onPolygonCreated: (layer: L.La
         circle: false,
         rectangle: true,
         marker: false,
-        circlemarker: false
+        circlemarker: false,
       },
       edit: {
-        featureGroup: drawnItems,
-        remove: true
-      }
+        featureGroup: featureGroup,
+        remove: true,
+      },
     });
 
     map.addControl(drawControl);
 
-    map.on(L.Draw.Event.CREATED, (event: any) => {
-      const layer = event.layer;
-      drawnItems.addLayer(layer);
-      onPolygonCreated(layer);
-    });
+    const handleCreated = (event: L.DrawEvents.Created) => {
+      if (featureGroup) {
+        // Clear previous layers before adding the new one
+        featureGroup.clearLayers();
+        // Add the newly drawn layer to the feature group so it's visible
+        featureGroup.addLayer(event.layer);
+      }
+      // Notify the parent component with the new layer's data
+      onPolygonCreated(event.layer);
+    };
+
+    const handleDeleted = () => {
+      onClear();
+    };
+
+    map.on(L.Draw.Event.CREATED, handleCreated);
+    map.on(L.Draw.Event.DELETED, handleDeleted);
 
     return () => {
       map.removeControl(drawControl);
-      map.removeLayer(drawnItems);
+      map.off(L.Draw.Event.CREATED, handleCreated);
+      map.off(L.Draw.Event.DELETED, handleDeleted);
     };
-  }, [map, onPolygonCreated]);
+  }, [map, featureGroup, onPolygonCreated, onClear]);
 };

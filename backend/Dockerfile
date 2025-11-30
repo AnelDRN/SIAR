@@ -15,5 +15,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends gdal-bin libgda
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
+# Explicitly copy the analysis data to ensure it's available
+COPY analysis/data /app/analysis/data
+
 # Copy project
 COPY . .

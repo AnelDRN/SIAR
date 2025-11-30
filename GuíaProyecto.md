@@ -1,7 +1,7 @@
 # **Documento Guía del Proyecto: Sistema de Identificación de Áreas para Reforestación (SIAR)**
 
-**Versión:** 1.3
-**Fecha:** 22 de Noviembre de 2025 (Actualizada)
+**Versión:** 1.7
+**Fecha:** 30 de Noviembre de 2025 (Actualizada)
 
 **Instrucciones para el Asistente de IA (Gemini CLI)**
 - Este documento es la referencia principal y la **única fuente de verdad** para el "Proyecto SIAR".
@@ -46,12 +46,13 @@
 
 **Sección 4: Variables Críticas y Fuentes de Datos (MVP)**
 
-| Categoría | Variable Crítica | Fuente de Datos (Ejemplo) |
+| Categoría | Variable Crítica | Fuente de Datos (Actual) |
 | :--- | :--- | :--- |
-| **Suelo** | Tipo/Textura, Profundidad, Erosión | Mapas de suelos nacionales, datos geológicos. |
-| **Topografía** | Pendiente, Altitud | Modelos Digitales de Elevación (DEM) de SRTM/ASTER. |
-| **Clima** | Precipitación Media Anual | Datasets globales como WorldClim. |
-| **Ecología** | Uso Actual del Suelo, Especies Nativas | Imágenes satelitales (Sentinel, Landsat), bases de datos de biodiversidad. |
+| **Suelo** | Tipo/Textura, Profundidad | ISRIC SoilGrids (vía librería `soilgrids`) |
+| **Topografía** | Pendiente, Altitud | OpenTopography SRTMGL1 (vía librería `bmi-topography`) |
+| **Clima** | Precipitación Media Anual | WorldClim (v2.1 local GeoTIFF) |
+| **Ecología** | Uso Actual del Suelo | ESA WorldCover (vía WCS Digital Earth Africa) |
+| **Ecología** | Especies Nativas | GBIF (API REST, integración completa) |
 
 ---
 
@@ -62,7 +63,7 @@
 - **Frontend:** React
 - **Visualización de Mapas:** Leaflet.js
 - **Base de Datos:** PostgreSQL con extensión PostGIS
-- **Análisis Geoespacial (Python):** GeoPandas, Rasterio, GDAL, NumPy, Shapely, **OWSLib**
+- **Análisis Geoespacial (Python):** GeoPandas, Rasterio, GDAL, NumPy, Shapely, OWSLib, **bmi-topography**, **soilgrids**
 - **Entorno de Desarrollo:** Docker
 - **UI Framework Frontend:** **Material-UI (MUI)**
 
@@ -81,7 +82,7 @@
     *   Expone el estado del análisis y los resultados finales vía API REST.
 3.  **Módulo de Análisis Geoespacial (`core.py`):**
     *   Ejecutado por el worker de Celery.
-    *   Procesa variables críticas (actualmente de datos de muestra) para el área seleccionada.
+    *   Procesa variables críticas para el área seleccionada usando proveedores dedicados (`data_acquisition.py`).
     *   Almacena los resultados en PostGIS.
     *   Lee la configuración desde variables de entorno (`django-environ`).
 
@@ -94,11 +95,11 @@
 - **DEM:** Digital Elevation Model.
 - **Especie Nativa:** Especie que pertenece a una región de forma natural.
 - **WCS:** Web Coverage Service, estándar OGC para acceder a datos raster geoespaciales.
+- **COG:** Cloud-Optimized GeoTIFF.
 
 ---
 
 **Sección 8: Estado y Bitácora del Proyecto**
-
 *Esta sección funciona como una bitácora cronológica del progreso.*
 
 - **Progreso de Hoy (Sesión del 15 de Octubre de 2025):**
@@ -207,7 +208,7 @@
 ---
 
 - **Resumen de la Sesión del 22 de Noviembre de 2025:**
-    - **Resumen Ejecutivo:** Sesión enfocada en la profesionalización del proyecto. Se refactorizó el backend para usar tareas asíncronas con Celery/Redis y se externalizó la configuración usando `django-environ`. Se ampliaron las pruebas del backend, incluyendo un test de integración para el algoritmo de análisis. El frontend se adaptó para manejar la API asíncrona, refactorizando componentes clave y mejorando la UI/UX con Material-UI. La sesión se vio afectada por problemas persistentes de sincronización de Docker en el entorno del usuario, lo que requirió la eliminación del montaje de volumen del frontend y un proceso de depuración exhaustivo.
+    - **Resumen Ejecutivo:** Sesión enfocada en la profesionalización del proyecto. Se refactorizó el backend para usar tareas asíncronas con Celery/Redis y se externalizó la configuración usando `django-environ`. Se ampliaron las pruebas del backend, incluyendo un test de integración para el algoritmo de análisis. El frontend se adaptó para manejar el flujo asíncrono, refactorizando componentes clave y mejorando la UI/UX con Material-UI. La sesión se vio afectada por problemas persistentes de sincronización de Docker en el entorno del usuario, lo que requirió la eliminación del montaje de volumen del frontend y un proceso de depuración exhaustivo.
     - **Hoja de Ruta del Proyecto (MVP):**
         - **Fase 0:** Configuración del Entorno y Esqueleto [Completada]
         - **Fase 1:** Modelo de Datos y Creación de la API [Completada]
@@ -250,13 +251,142 @@
 
 ---
 
+- **Resumen de la Sesión del 26 de Noviembre de 2025:**
+    - **Resumen Ejecutivo:** Se realizó una refactorización exhaustiva del módulo de adquisición de datos para integrar fuentes de datos reales y modernas. Se reemplazaron proveedores WCS inestables por APIs dedicadas (`bmi-topography` para DEM, `soilgrids` para suelo) y un proveedor de archivo local para precipitación. Se resolvieron múltiples errores de configuración y compatibilidad con servicios externos, dejando el pipeline de análisis geoespacial funcional con datos reales (excepto especies nativas).
+    - **Hoja de Ruta del Proyecto (MVP):**
+        - **Fase 0:** Configuración del Entorno y Esqueleto [Completada]
+        - **Fase 1:** Modelo de Datos y Creación de la API [Completada]
+        - **Fase 2:** Implementación del Núcleo de Análisis Geoespacial [Completada]
+        - **Fase 3:** Desarrollo del Frontend y Visualización de Mapa [Completada]
+        - **Fase 4:** Integración Completa y Visualización de Resultados [En Progreso - Pendiente GBIF]
+            - Integración de Datos Reales: [Completada - Pendiente GBIF]
+    - **Hitos Clave de la Sesión:**
+        - [x] Refactorización del módulo `data_acquisition.py` a un patrón de proveedor basado en clases.
+        - [x] Actualización de `backend/backend/settings.py`, `backend/.env` y `backend/.env.example` para una configuración de proveedor más flexible y para eliminar variables obsoletas (`DEM_WCS_URL`, `DEM_COVERAGE_ID`, `SOIL_WCS_URL`, `SOIL_MAP_TEMPLATE`, `SOIL_SILT_PROPERTY`, `SOIL_CLAY_PROPERTY`, `PRECIPITATION_WCS_URL`, `PRECIPITATION_COVERAGE_ID`).
+        - [x] Actualización del test de integración (`backend/analysis/tests.py`) para usar los nuevos mocks de proveedores.
+        - [x] Depuración y resolución del error `TypeError` en `AnalysisRequestSerializer` (`create` method).
+        - [x] Depuración y resolución del error `400 Bad Request` por `ALLOWED_HOSTS` en el backend.
+        - [x] Depuración y resolución del error `ModuleNotFoundError: No module named 'owslib'` en Celery worker mediante reconstrucción de imágenes.
+        - [x] Depuración y resolución de errores de formato (`Unsupported format: image/tiff` -> `GeoTIFF`) y parámetros faltantes (`WIDTH`/`HEIGHT`) con el servidor WCS de Digital Earth Africa (`ows.digitalearth.africa`).
+        - [x] **Decisión clave:** Reemplazar el `CopernicusDEMProvider` (WCS) por el `OpenTopographyDEMProvider` (usando la librería `bmi-topography`) para el DEM.
+        - [x] Instalación de la dependencia `bmi-topography`.
+        - [x] Depuración y resolución del `TypeError` en la inicialización de `bmi-topography` (requiere `bbox` en constructor).
+        - [x] **Decisión clave:** Reemplazar el `SoilProvider` (WCS) por el `SoilGridsProvider` (usando la librería `soilgrids`) para datos de suelo.
+        - [x] Instalación de la dependencia `soilgrids`.
+        - [x] Depuración y resolución del `TypeError` (`get_coverage_data() got an unexpected keyword argument 'output_crs'`) en `SoilGridsProvider`.
+        - [x] **Decisión clave:** Reemplazar el `PrecipitationProvider` (WCS) por un `LocalFilePrecipitationProvider` (usando archivo local) para precipitación.
+        - [x] Descarga manual y verificación del archivo `wc2.1_30s_prec.zip` y su ubicación en `backend/analysis/data/worldclim/`.
+        - [x] Descompresión exitosa de `wc2.1_30s_prec.zip`, obteniendo los archivos GeoTIFF mensuales.
+        - [x] Depuración y resolución del `ValueError` (`Please provide width and height values when the coordinate system (crs) is EPSG 4326.`) en `SoilGridsProvider`.
+        - [ ] Implementación y corrección final de `LocalFilePrecipitationProvider` en `core.py`.
+        - [ ] Verificación de que el pipeline de análisis se ejecuta completamente sin errores con todos los nuevos proveedores de datos.
+    - **Posición Actual:** Los proveedores para DEM, Suelo y Cobertura del Suelo están funcionando con fuentes de datos fiables. El `LocalFilePrecipitationProvider` ha sido implementado en `data_acquisition.py` y los archivos GeoTIFF están disponibles localmente, pero su integración final en `core.py` y la verificación de todo el pipeline aún están pendientes.
+    - **Siguiente Tarea Inmediata:**
+        1.  Completar la integración del `LocalFilePrecipitationProvider` en `core.py`.
+        2.  Verificar que el pipeline de análisis se ejecuta completamente sin errores para todas las variables críticas.
+        3.  Implementar la integración de datos para **Especies Nativas** usando la API de GBIF.
+    - **Bloqueos o Dudas:** Ninguno.
+- **Resumen de la Sesión del 27 de Noviembre de 2025:**
+    - **Resumen Ejecutivo:** Se dedicó la sesión a mejorar la experiencia de usuario y la robustez del backend. Se implementaron mejoras en la interfaz de usuario, como mensajes de estado detallados y validación de área. Se diagnosticó y solucionó un problema crítico en el motor de análisis que causaba resultados de baja viabilidad. Se revirtió una implementación de "tiling" que causaba inestabilidad, dejando el sistema en un estado funcional y mejorado.
+    - **Hoja de Ruta del Proyecto (MVP):**
+        - **Fase 5:** Profesionalización y Refuerzo de Calidad [En Progreso]
+            - Backend: [En Progreso]
+            - Frontend: [En Progreso]
+    - **Hitos Clave de la Sesión:**
+        - [x] **Mejoras de UI/UX:**
+            - [x] Implementado un sistema de mensajes de estado dinámicos durante el análisis.
+            - [x] Añadida validación en el frontend para limitar el tamaño mínimo y máximo del área de análisis.
+            - [x] Limpieza de la vista inicial del mapa, eliminando polígonos de prueba estáticos.
+            - [x] Creados componentes de React para mostrar un resumen de resultados y una lista detallada de especies.
+        - [x] **Diagnóstico y Corrección de Lógica de Análisis:**
+            - [x] Identificado que los datos de suelo (silt, clay) de SoilGrids se proveen en g/kg.
+            - [x] Corregido el `core.py` para convertir las unidades de suelo a porcentaje antes de la evaluación.
+            - [x] Ajustados los umbrales de los criterios de análisis para ser más permisivos y generar resultados más realistas.
+        - [x] **Reversión de Cambios:**
+            - [x] Revertida la implementación de la estrategia de "tiling" en el backend para restaurar la funcionalidad principal del análisis.
+            - [x] Eliminado el modelo de `parent_request` y las migraciones asociadas.
+    - **Posición Actual:**
+        - El MVP es funcional. El motor de análisis ahora produce resultados más precisos y variados. La interfaz de usuario proporciona un feedback más claro al usuario.
+    - **Siguiente Tarea Inmediata:**
+        - [ ] Re-evaluar e implementar de forma estable la estrategia de **tiling** para el manejo de áreas grandes, asegurando que no se introduzcan errores.
+    - **Bloqueos o Dudas:**
+        - [x] **Error de Backend Persistente:** Existe un problema recurrente con el backend que causa fallos en el análisis, incluso con la lógica de tiling revertida. La causa raíz parece ser el límite de la API de OpenTopography. Se necesita una API Key para solucionar esto de forma definitiva.
+
+---
+- **Resumen de la Sesión del 27 de Noviembre de 2025 (Continuación):**
+    - **Resumen Ejecutivo:** La sesión se centró en robustecer el sistema contra los límites de las API externas. Se diagnosticó que los fallos del backend se debían a la superación de la cuota anónima de la API de OpenTopography y se implementó una solución permanente mediante el uso de una API key.
+    - **Hoja de Ruta del Proyecto (MVP):**
+        - **Fase 5:** Profesionalización y Refuerzo de Calidad [En Progreso]
+    - **Hitos Clave de la Sesión:**
+        - [x] Diagnosticado el límite de la API de OpenTopography como causa de los fallos del backend.
+        - [x] Investigada la documentación de `bmi-topography` para el uso de API keys.
+        - [x] Actualizado `backend/backend/settings.py` para leer la variable de entorno `OPENTOPOGRAPHY_API_KEY`.
+        - [x] Actualizado `backend/analysis/data_acquisition.py` para inyectar la API key en las peticiones a OpenTopography.
+        - [x] Actualizado `backend/.env.example` para incluir la nueva variable.
+    - **Posición Actual:**
+        - El código del backend ha sido modificado para solucionar el problema de límites de la API de OpenTopography. La solución está pendiente de verificación.
+    - **Siguiente Tarea Inmediata:**
+        1.  [ ] Que el usuario solucione los problemas de su entorno Docker local.
+        2.  [ ] Reconstruir las imágenes Docker para aplicar los cambios (`docker-compose build`).
+        3.  [ ] Ejecutar un análisis de prueba para confirmar que la API key soluciona el error con OpenTopography.
+        4.  [ ] Implementar la integración de datos para **Especies Nativas** usando la API de GBIF.
+    - **Bloqueos o Dudas:**
+        - [x] **El entorno Docker del usuario no es funcional**, lo que impide la compilación y verificación de la solución. Requiere una acción por parte del usuario (reinicio del sistema).
+
+- **Resumen de la Sesión del 30 de Noviembre de 2025 (Sincronización):**
+    - **Resumen Ejecutivo:** Se realizó una sincronización completa del estado del proyecto, verificando que el código base está más avanzado que la última bitácora registrada. El MVP es funcional, con un backend robusto que utiliza tareas asíncronas, configuración externalizada y proveedores de datos reales (OpenTopography, SoilGrids, GBIF, WorldClim local). El frontend está adaptado al flujo asíncrono y presenta una UI/UX mejorada.
+    - **Hoja de Ruta del Proyecto (MVP):**
+        - **Fase 0:** Configuración del Entorno y Esqueleto [Completada]
+        - **Fase 1:** Modelo de Datos y Creación de la API [Completada]
+        - **Fase 2:** Implementación del Núcleo de Análisis Geoespacial [Completada]
+        - **Fase 3:** Desarrollo del Frontend y Visualización de Mapa [Completada]
+        - **Fase 4:** Integración Completa y Visualización de Resultados [Completada]
+        - **Fase 5:** Profesionalización y Refuerzo de Calidad [Completada]
+    - **Hitos Clave de la Sesión (Verificados en el Código):**
+        - [x] Verificada la integración exitosa de la API Key de OpenTopography en el `OpenTopographyDEMProvider`.
+        - [x] Verificada la implementación completa del `GBIFAPIProvider` y su integración en `core.py` para la recomendación de especies.
+        - [x] Confirmado que el frontend gestiona correctamente el ciclo de vida del análisis asíncrono, incluyendo el polling de estado y la visualización de resultados y especies.
+        - [x] Verificado que el entorno Docker del proyecto es completamente funcional.
+    - **Posición Actual:** El proyecto es un MVP funcional y completo. El backend es estable, consume datos de fuentes reales y el frontend está integrado para visualizar los resultados, incluyendo las especies recomendadas.
+    - **Bloqueos o Dudas:**
+        - [ ] Ninguno.
+
+---
+- **Resumen de la Sesión del 30 de Noviembre de 2025 (Continuación - Resolución de Bugs):**
+    - **Resumen Ejecutivo:** Sesión intensiva dedicada a la depuración y resolución de dos bugs críticos: la no visualización de especies recomendadas y el funcionamiento incorrecto del "fly-to" en el mapa, además de una regresión que causaba la desaparición del polígono. Se identificó y resolvió una compleja interacción entre el entorno Docker (problemas de montajes de volumen y caché) y la lógica de procesamiento de geometría. La aplicación es ahora completamente funcional y estable.
+    - **Hoja de Ruta del Proyecto (MVP):**
+        - **Fase 0:** Configuración del Entorno y Esqueleto [Completada]
+        - **Fase 1:** Modelo de Datos y Creación de la API [Completada]
+        - **Fase 2:** Implementación del Núcleo de Análisis Geoespacial [Completada]
+        - **Fase 3:** Desarrollo del Frontend y Visualización de Mapa [Completada]
+        - **Fase 4:** Integración Completa y Visualización de Resultados [Completada]
+        - **Fase 5:** Profesionalización y Refuerzo de Calidad [Completada]
+    - **Hitos Clave de la Sesión:**
+        - [x] **Diagnóstico y Corrección de Regresión:** Identificación de conflicto de lógica en `MapView.tsx` (`DrawControlLayer`) causando la desaparición del polígono, y corrección.
+        - [x] **Diagnóstico y Corrección de "Fly to":** Identificación de prop faltante (`selectedPolygon`) en `MapView.tsx` desde `App.tsx` y corrección.
+        - [x] **Diagnóstico y Corrección de Especies No Visibles (Backend):**
+            - [x] Identificación de problema de `volumes` en `docker-compose.yml` que impedía la aplicación de cambios en el backend.
+            - [x] Eliminación de `volumes` para `backend` y `celery_worker` para forzar el uso del código de la imagen.
+            - [x] Identificación del error `Polygon with clockwise exterior ring` de la API de GBIF persistente.
+            - [x] Implementación de lógica manual de inversión de coordenadas en `GBIFAPIProvider` para garantizar orden antihorario, superando inconsistencias con `shapely.ops.orient`.
+        - [x] **Limpieza de Código:** Eliminación de todos los `console.log` de depuración del frontend.
+        - [x] **Refactorización Frontend:** Extracción de `DrawControlLayer` y `MapFlyTo` de `MapView.tsx` a sus propios archivos.
+    - **Posición Actual:** El MVP es completamente funcional y estable. Todos los bugs reportados han sido resueltos.
+    - **Siguiente Tarea Inmediata:**
+        - [ ] Revisión y potencial refactorización del componente `MapView.tsx` para mejorar la legibilidad y modularidad.
+    - **Bloqueos o Dudas:**
+        - [ ] Ninguno.
+
+---
+
 **Sección 9: Mejoras Futuras y Hoja de Ruta Post-MVP**
 
 Esta sección documenta las mejoras estratégicas que se han identificado durante el desarrollo del MVP para ser consideradas en futuras versiones del proyecto.
 
-- **Integración de Datos Reales (WCS):** Reemplazar los archivos de datos de muestra por un "Módulo de Adquisición de Datos" que se conecte a servicios WCS/APIs externas para obtener datos geoespaciales en tiempo real (o casi real). Esta es la **siguiente fase prioritaria**.
+- **Historial de Análisis:** Implementar un sistema para guardar y visualizar el historial de análisis realizados por el usuario.
 - **Refinamiento del Algoritmo:** El algoritmo de clasificación actual (basado en 3 o 4 criterios con puntuación simple) debe ser mejorado para incluir más criterios (hasta 5 o más) y para generar una clasificación más granular o ponderada.
-- **Suite de Pruebas Formal:** Expandir la suite de pruebas para incluir pruebas de UI/integración del frontend, así como más pruebas unitarias y de estrés para el backend y el módulo de análisis.
+- **Sistema de Mosaico (Tiling) para WCS:** Implementar la capacidad de dividir grandes áreas de interés en múltiples peticiones más pequeñas para evitar las limitaciones de los servidores WCS (como las experimentadas con Digital Earth Africa para el DEM). (Desprioritizado)
+- **Suite de Pruebas Formal:** Expandir la suite de pruebas para incluir pruebas de UI/integración del frontend, así así como más pruebas unitarias y de estrés para el backend y el módulo de análisis.
 - **Mejora del Layout de UI:** Explorar opciones para reintroducir un layout más sofisticado (como el `Grid` de MUI) si fuera necesario, una vez que la estabilidad del mapa con el layout actual esté garantizada y el tiempo lo permita.
 - **Optimización de Rendimiento:** Optimizar las consultas a la base de datos y el procesamiento geoespacial para grandes áreas.
 - **Manejo de Errores Robustos:** Implementar un manejo de errores más sofisticado tanto en el frontend como en el backend, con logging y notificación.
