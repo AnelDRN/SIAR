@@ -66,12 +66,28 @@ def execute_analysis(analysis_request_id: int):
         species_data = gbif_provider.get_data(area_of_interest_geom)
         recommended_species_objects = []
         for species_info in species_data:
-            species_obj, created = Species.objects.get_or_create(
-                scientific_name=species_info['scientific_name'],
-                defaults={'name': species_info.get('name', species_info['scientific_name'])}
-            )
+            common_name = species_info.get('name', species_info['scientific_name'])
+            scientific_name = species_info['scientific_name']
+
+            try:
+                species_obj, created = Species.objects.get_or_create(
+                    scientific_name=scientific_name,
+                    defaults={'name': common_name}
+                )
+            except IntegrityError:
+                # This means the 'name' field conflicted on creation because it's unique.
+                # It implies a species with this common name already exists,
+                # but with a different scientific_name.
+                # To resolve, we'll try to make the name unique by appending scientific_name.
+                unique_common_name = f"{common_name} ({scientific_name})"
+                species_obj, created = Species.objects.get_or_create(
+                    scientific_name=scientific_name,
+                    defaults={'name': unique_common_name}
+                )
+                logger.warning(f"Species common name '{common_name}' conflicted. Created as '{unique_common_name}'")
+
             if created:
-                logger.info(f"Created new species: {species_info['name']}")
+                logger.info(f"Created new species: {species_obj.name}")
             recommended_species_objects.append(species_obj)        
         # --- Raster Processing & Analysis ---
         with rasterio.open(dem_temp_path) as dem_src:

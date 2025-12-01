@@ -1,288 +1,59 @@
-**************** DEBUGGING: PROCESSED SPECIES FOR LIST ****************
-InfoPanel.tsx:28 Species being passed to SpeciesList: []
-InfoPanel.tsx:29 ***********************************************************************
-InfoPanel.tsx:27 **************** DEBUGGING: PROCESSED SPECIES FOR LIST ****************
-InfoPanel.tsx:28 Species being passed to SpeciesList: []
-InfoPanel.tsx:29 ***********************************************************************
-MapView.tsx:56 **************** DEBUGGING: FLYTO EFFECT TRIGGERED ****************
-MapView.tsx:57 FlyTo triggered with status: idle
-MapView.tsx:58 FlyTo selectedPolygon: null
-MapView.tsx:77 FlyTo: No selectedPolygon. Doing nothing.
-MapView.tsx:79 *******************************************************************
-MapView.tsx:56 **************** DEBUGGING: FLYTO EFFECT TRIGGERED ****************
-MapView.tsx:57 FlyTo triggered with status: idle
-MapView.tsx:58 FlyTo selectedPolygon: null
-MapView.tsx:77 FlyTo: No selectedPolygon. Doing nothing.
-MapView.tsx:79 *******************************************************************
-InfoPanel.tsx:27 **************** DEBUGGING: PROCESSED SPECIES FOR LIST ****************
-InfoPanel.tsx:28 Species being passed to SpeciesList: []
-InfoPanel.tsx:29 ***********************************************************************
-InfoPanel.tsx:27 **************** DEBUGGING: PROCESSED SPECIES FOR LIST ****************
-InfoPanel.tsx:28 Species being passed to SpeciesList: []
-InfoPanel.tsx:29 ***********************************************************************
-MapView.tsx:56 **************** DEBUGGING: FLYTO EFFECT TRIGGERED ****************
-MapView.tsx:57 FlyTo triggered with status: idle
-MapView.tsx:58 FlyTo selectedPolygon: {type: 'Feature', properties: {…}, geometry: {…}}
-MapView.tsx:65 Calculated bounds: LatLngBounds {_southWest: LatLng, _northEast: LatLng}
-MapView.tsx:68 Flying to bounds...
-MapView.tsx:79 *******************************************************************
-useAnalysis.ts:39 Starting analysis with geoJSON: {type: 'Feature', properties: {…}, geometry: {…}}
-InfoPanel.tsx:27 **************** DEBUGGING: PROCESSED SPECIES FOR LIST ****************
-InfoPanel.tsx:28 Species being passed to SpeciesList: []
-InfoPanel.tsx:29 ***********************************************************************
-InfoPanel.tsx:27 **************** DEBUGGING: PROCESSED SPECIES FOR LIST ****************
-InfoPanel.tsx:28 Species being passed to SpeciesList: []
-InfoPanel.tsx:29 ***********************************************************************
-MapView.tsx:56 **************** DEBUGGING: FLYTO EFFECT TRIGGERED ****************
-MapView.tsx:57 FlyTo triggered with status: loading
-MapView.tsx:58 FlyTo selectedPolygon: {type: 'Feature', properties: {…}, geometry: {…}}
-MapView.tsx:65 Calculated bounds: LatLngBounds {_southWest: LatLng, _northEast: LatLng}
-MapView.tsx:68 Flying to bounds...
-MapView.tsx:79 *******************************************************************
-useAnalysis.ts:56 Analysis request successful: {id: 267, type: 'Feature', geometry: {…}, properties: {…}}
-InfoPanel.tsx:27 **************** DEBUGGING: PROCESSED SPECIES FOR LIST ****************
-InfoPanel.tsx:28 Species being passed to SpeciesList: []
-InfoPanel.tsx:29 ***********************************************************************
-InfoPanel.tsx:27 **************** DEBUGGING: PROCESSED SPECIES FOR LIST ****************
-InfoPanel.tsx:28 Species being passed to SpeciesList: []
-InfoPanel.tsx:29 ***********************************************************************
-6useAnalysis.ts:81 Polling analysis status: IN_PROGRESS
-useAnalysis.ts:81 Polling analysis status: COMPLETED
-InfoPanel.tsx:27 **************** DEBUGGING: PROCESSED SPECIES FOR LIST ****************
-InfoPanel.tsx:28 Species being passed to SpeciesList: []
-InfoPanel.tsx:29 ***********************************************************************
-InfoPanel.tsx:27 **************** DEBUGGING: PROCESSED SPECIES FOR LIST ****************
-InfoPanel.tsx:28 Species being passed to SpeciesList: []
-InfoPanel.tsx:29 ***********************************************************************
-useAnalysis.ts:88 **************** DEBUGGING: RAW ANALYSIS RESULTS RECEIVED ****************
-useAnalysis.ts:89 {
-  "type": "FeatureCollection",
-  "features": [
-    {
-      "id": 153852,
-      "type": "Feature",
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
-          [
-            [
-              -79.53208333332003,
-              9.031249999993248
-            ],
-            [
-              -79.53208333332003,
-              9.03097222221547
-            ],
-            [
-              -79.53152777776447,
-              9.03097222221547
-            ],
-            [
-              -79.53152777776447,
-              9.031249999993248
-            ],
-            [
-              -79.53208333332003,
-              9.031249999993248
-            ]
-          ]
-        ]
-      },
-      "properties": {
-        "request": 267,
-        "viability_level": "MEDIUM",
-        "slope_suitability": false,
-        "soil_suitability": false,
-        "altitude_suitability": false,
-        "precipitation_suitability": false,
-        "recommended_species": []
-      }
-    },
-    {
-      "id": 153853,
-      "type": "Feature",
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
-          [
-            [
-              -79.53291666665336,
-              9.03097222221547
-            ],
-            [
-              -79.53291666665336,
-              9.030694444437692
-            ],
-            [
-              -79.53263888887558,
-              9.030694444437692
-            ],
-            [
-              -79.53263888887558,
-              9.03097222221547
-            ],
-            [
-              -79.53291666665336,
-              9.03097222221547
-            ]
-          ]
-        ]
-      },
-      "properties": {
-        "request": 267,
-        "viability_level": "MEDIUM",
-        "slope_suitability": false,
-        "soil_suitability": true,
-        "altitude_suitability": true,
-        "precipitation_suitability": false,
-        "recommended_species": []
-      }
-    },
-    {
-      "id": 153854,
-      "type": "Feature",
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
-          [
-            [
-              -79.53208333332003,
-              9.029861111104358
-            ],
-            [
-              -79.53208333332003,
-              9.029583333326581
-            ],
-            [
-              -79.53152777776447,
-              9.029583333326581
-            ],
-            [
-              -79.53152777776447,
-              9.029861111104358
-            ],
-            [
-              -79.53208333332003,
-              9.029861111104358
-            ]
-          ]
-        ]
-      },
-      "properties": {
-        "request": 267,
-        "viability_level": "HIGH",
-        "slope_suitability": false,
-        "soil_suitability": true,
-        "altitude_suitability": true,
-        "precipitation_suitability": false,
-        "recommended_species": []
-      }
-    },
-    {
-      "id": 153855,
-      "type": "Feature",
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
-          [
-            [
-              -79.53069444443113,
-              9.029861111104358
-            ],
-            [
-              -79.53069444443113,
-              9.029583333326581
-            ],
-            [
-              -79.53041666665337,
-              9.029583333326581
-            ],
-            [
-              -79.53041666665337,
-              9.029861111104358
-            ],
-            [
-              -79.53069444443113,
-              9.029861111104358
-            ]
-          ]
-        ]
-      },
-      "properties": {
-        "request": 267,
-        "viability_level": "HIGH",
-        "slope_suitability": false,
-        "soil_suitability": false,
-        "altitude_suitability": false,
-        "precipitation_suitability": false,
-        "recommended_species": []
-      }
-    },
-    {
-      "id": 153856,
-      "type": "Feature",
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
-          [
-            [
-              -79.53180555554225,
-              9.033749999993248
-            ],
-            [
-              -79.53180555554225,
-              9.03347222221547
-            ],
-            [
-              -79.53208333332003,
-              9.03347222221547
-            ],
-            [
-              -79.53208333332003,
-              9.033194444437692
-            ],
-            [
-              -79.5323611110978,
-              9.033194444437692
-            ],
-            [
-              -79.5323611110978,
-              9.032916666659915
-            ],
-            [
-              -79.53291666665336,
-              9.032916666659915
-            ],
-            [
-              -79.53291666665336,
-              9.032638888882136
-            ],
-            [
-              -79.53319444443115,
-              9.032638888882136
-            ],
-            [
-              -79.53319444443115,
-              9.03236111110436
-            ],
-            [
-              -79.53347222220891,
-              9.03236111110436
-            ],
-            [
-              -79.53347222220891,
-              9.03208333332658
-       
-useAnalysis.ts:90 **************************************************************************
-InfoPanel.tsx:27 **************** DEBUGGING: PROCESSED SPECIES FOR LIST ****************
-InfoPanel.tsx:28 Species being passed to SpeciesList: []
-InfoPanel.tsx:29 ***********************************************************************
-InfoPanel.tsx:27 **************** DEBUGGING: PROCESSED SPECIES FOR LIST ****************
-InfoPanel.tsx:28 Species being passed to SpeciesList: []
-InfoPanel.tsx:29 ***********************************************************************
-MapView.tsx:56 **************** DEBUGGING: FLYTO EFFECT TRIGGERED ****************
-MapView.tsx:57 FlyTo triggered with status: success
-MapView.tsx:58 FlyTo selectedPolygon: {type: 'Feature', properties: {…}, geometry: {…}}
-MapView.tsx:65 Calculated bounds: LatLngBounds {_southWest: LatLng, _northEast: LatLng}
-MapView.tsx:68 Flying to bounds...
-MapView.tsx:79 *******************************************************************
+Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+App.tsx:21 useEffect triggered, selectedHistoryId: null
+App.tsx:21 useEffect triggered, selectedHistoryId: null
+useAnalysis.ts:47 Starting analysis with geoJSON: {type: 'Feature', properties: {…}, geometry: {…}}
+useAnalysis.ts:65 Analysis request successful: {id: 280, type: 'Feature', geometry: {…}, properties: {…}}
+6useAnalysis.ts:117 Polling analysis status: IN_PROGRESS
+useAnalysis.ts:117 Polling analysis status: COMPLETED
+AnalysisHistory.tsx:30 Warning: Each child in a list should have a unique "key" prop.
+
+Check the render method of `AnalysisHistory`. See https://reactjs.org/link/warning-keys for more information.
+    at ListItem2 (http://localhost:5173/node_modules/.vite/deps/@mui_material.js?v=0e74b179:26208:17)
+    at AnalysisHistory (http://localhost:5173/src/components/AnalysisHistory.tsx:21:28)
+    at div
+    at http://localhost:5173/node_modules/.vite/deps/chunk-3D7XYEAX.js?v=4e8e88da:2429:45
+    at CardContent2 (http://localhost:5173/node_modules/.vite/deps/@mui_material.js?v=0e74b179:16179:17)
+    at div
+    at http://localhost:5173/node_modules/.vite/deps/chunk-3D7XYEAX.js?v=4e8e88da:2429:45
+    at Paper2 (http://localhost:5173/node_modules/.vite/deps/@mui_material.js?v=0e74b179:3051:17)
+    at http://localhost:5173/node_modules/.vite/deps/chunk-3D7XYEAX.js?v=4e8e88da:2429:45
+    at Card2 (http://localhost:5173/node_modules/.vite/deps/@mui_material.js?v=0e74b179:15838:17)
+    at InfoPanel (http://localhost:5173/src/components/InfoPanel.tsx:24:22)
+    at div
+    at http://localhost:5173/node_modules/.vite/deps/chunk-3D7XYEAX.js?v=4e8e88da:2429:45
+    at Box3 (http://localhost:5173/node_modules/.vite/deps/chunk-3D7XYEAX.js?v=4e8e88da:5478:19)
+    at div
+    at http://localhost:5173/node_modules/.vite/deps/chunk-3D7XYEAX.js?v=4e8e88da:2429:45
+    at Box3 (http://localhost:5173/node_modules/.vite/deps/chunk-3D7XYEAX.js?v=4e8e88da:5478:19)
+    at main
+    at http://localhost:5173/node_modules/.vite/deps/chunk-3D7XYEAX.js?v=4e8e88da:2429:45
+    at Container3 (http://localhost:5173/node_modules/.vite/deps/chunk-3D7XYEAX.js?v=4e8e88da:7413:19)
+    at div
+    at http://localhost:5173/node_modules/.vite/deps/chunk-3D7XYEAX.js?v=4e8e88da:2429:45
+    at Box3 (http://localhost:5173/node_modules/.vite/deps/chunk-3D7XYEAX.js?v=4e8e88da:5478:19)
+    at Layout (http://localhost:5173/src/components/Layout.tsx:19:19)
+    at App (http://localhost:5173/src/App.tsx:27:49)
+    at DefaultPropsProvider (http://localhost:5173/node_modules/.vite/deps/chunk-3D7XYEAX.js?v=4e8e88da:6143:3)
+    at RtlProvider (http://localhost:5173/node_modules/.vite/deps/chunk-3D7XYEAX.js?v=4e8e88da:6119:3)
+    at ThemeProvider2 (http://localhost:5173/node_modules/.vite/deps/chunk-3D7XYEAX.js?v=4e8e88da:6075:5)
+    at ThemeProvider3 (http://localhost:5173/node_modules/.vite/deps/chunk-3D7XYEAX.js?v=4e8e88da:6295:5)
+    at ThemeProviderNoVars (http://localhost:5173/node_modules/.vite/deps/chunk-ELW3OA26.js?v=4e8e88da:277:10)
+    at ThemeProvider (http://localhost:5173/node_modules/.vite/deps/chunk-ELW3OA26.js?v=4e8e88da:426:3)
+printWarning @ react_jsx-dev-runtime.js?v=8b4e0e55:64
+error @ react_jsx-dev-runtime.js?v=8b4e0e55:48
+validateExplicitKey @ react_jsx-dev-runtime.js?v=8b4e0e55:724
+validateChildKeys @ react_jsx-dev-runtime.js?v=8b4e0e55:737
+jsxWithValidation @ react_jsx-dev-runtime.js?v=8b4e0e55:855
+AnalysisHistory @ AnalysisHistory.tsx:30
+renderWithHooks @ chunk-NUMECXU6.js?v=4e8e88da:11548
+updateFunctionComponent @ chunk-NUMECXU6.js?v=4e8e88da:14582
+beginWork @ chunk-NUMECXU6.js?v=4e8e88da:15924
+beginWork$1 @ chunk-NUMECXU6.js?v=4e8e88da:19753
+performUnitOfWork @ chunk-NUMECXU6.js?v=4e8e88da:19198
+workLoopSync @ chunk-NUMECXU6.js?v=4e8e88da:19137
+renderRootSync @ chunk-NUMECXU6.js?v=4e8e88da:19116
+performConcurrentWorkOnRoot @ chunk-NUMECXU6.js?v=4e8e88da:18678
+workLoop @ chunk-NUMECXU6.js?v=4e8e88da:197
+flushWork @ chunk-NUMECXU6.js?v=4e8e88da:176
+performWorkUntilDeadline @ chunk-NUMECXU6.js?v=4e8e88da:384
+App.tsx:21 useEffect triggered, selectedHistoryId: undefined

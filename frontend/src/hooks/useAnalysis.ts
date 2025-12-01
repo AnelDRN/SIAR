@@ -31,6 +31,14 @@ export const useAnalysis = () => {
     setStatusMessage(prev => ({ id: prev.id + 1, message }));
   };
 
+  const stopPolling = useCallback(() => {
+    if (messageIntervalRef.current) {
+      clearInterval(messageIntervalRef.current);
+      messageIntervalRef.current = null;
+    }
+  }, []);
+
+
   const startAnalysis = useCallback((geoJSON: any) => {
     if (!geoJSON || !geoJSON.geometry) {
       console.error("Invalid GeoJSON provided to startAnalysis");
@@ -42,6 +50,7 @@ export const useAnalysis = () => {
     setRequestId(null);
     setAnalysisStatus('loading');
     updateStatusMessage(progressMessages[0]);
+    stopPolling(); // Stop any previous polling or message interval
 
     let messageIndex = 1;
     messageIntervalRef.current = window.setInterval(() => {
@@ -60,28 +69,55 @@ export const useAnalysis = () => {
         console.error('Error sending analysis request:', error);
         setAnalysisStatus('error');
         updateStatusMessage('Error: no se pudo iniciar el análisis.');
-        if (messageIntervalRef.current) {
-            clearInterval(messageIntervalRef.current);
-        }
+        stopPolling();
       });
-  }, []);
+  }, [stopPolling]);
+
+  const fetchAnalysisResults = useCallback(async (reqId: number) => {
+    // Add a guard to prevent running with an invalid ID
+    if (reqId === null || reqId === undefined) {
+      console.warn("fetchAnalysisResults called with invalid ID:", reqId);
+      return;
+    }
+
+    console.log(`Fetching results for request ID: ${reqId}`);
+    setAnalysisResults(null);
+    setRequestId(reqId);
+    setAnalysisStatus('loading');
+    updateStatusMessage('Cargando resultados históricos...');
+    stopPolling();
+
+    try {
+      const response = await axios.get(`/api/v1/analysis-results/?request_id=${reqId}`);
+      setAnalysisResults(response.data);
+      setAnalysisStatus('success');
+      updateStatusMessage('Resultados históricos cargados.');
+    } catch (error) {
+      console.error(`Error fetching historical analysis results for ${reqId}:`, error);
+      setAnalysisStatus('error');
+      updateStatusMessage('Error: no se pudieron cargar los resultados históricos.');
+    }
+  }, [stopPolling]);
 
   useEffect(() => {
     if (!requestId || analysisStatus !== 'loading') {
-        if (messageIntervalRef.current) {
-            clearInterval(messageIntervalRef.current);
-        }
+        stopPolling();
         return;
+    }
+
+    // Prevent polling when loading historical results directly
+    if (statusMessage.message === 'Cargando resultados históricos...') {
+      return;
     }
 
     const pollingInterval = setInterval(() => {
       axios.get(`/api/v1/analysis-requests/${requestId}/`)
         .then(response => {
-          const { status } = response.data.properties;
+          const { status } = response.data.properties; // Assuming properties for status
           console.log(`Polling analysis status: ${status}`);
           if (status === 'COMPLETED') {
             clearInterval(pollingInterval);
-            if (messageIntervalRef.current) clearInterval(messageIntervalRef.current);
+            stopPolling();
             updateStatusMessage('Análisis completado. Obteniendo resultados...');
             axios.get(`/api/v1/analysis-results/?request_id=${requestId}`)
               .then(res => {
@@ -96,7 +132,7 @@ export const useAnalysis = () => {
               });
           } else if (status === 'FAILED') {
             clearInterval(pollingInterval);
-            if (messageIntervalRef.current) clearInterval(messageIntervalRef.current);
+            stopPolling();
             setAnalysisStatus('error');
             updateStatusMessage('El análisis falló en el backend.');
             console.error('Analysis failed on the backend.');
@@ -105,7 +141,7 @@ export const useAnalysis = () => {
         .catch(error => {
           console.error('Error polling for analysis status:', error);
           clearInterval(pollingInterval);
-          if (messageIntervalRef.current) clearInterval(messageIntervalRef.current);
+          stopPolling();
           setAnalysisStatus('error');
           updateStatusMessage('Error de comunicación con el servidor.');
         });
@@ -113,18 +149,16 @@ export const useAnalysis = () => {
 
     return () => {
         clearInterval(pollingInterval);
-        if (messageIntervalRef.current) {
-            clearInterval(messageIntervalRef.current);
-        }
+        stopPolling();
     };
-  }, [requestId, analysisStatus]);
+  }, [requestId, analysisStatus, statusMessage.message, stopPolling]);
 
   return {
     analysisStatus,
     analysisResults,
     statusMessage,
     startAnalysis,
-    setAnalysisResults,
-    setAnalysisStatus
+    fetchAnalysisResults, // Expose the new function
+    requestId, // Expose requestId if needed externally
   };
 };

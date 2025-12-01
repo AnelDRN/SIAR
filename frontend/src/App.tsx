@@ -8,13 +8,25 @@ import { useAnalysis } from './hooks/useAnalysis';
 
 function App() {
   const [selectedPolygon, setSelectedPolygon] = useState<any>(null);
-  const { analysisStatus, analysisResults, statusMessage, startAnalysis } = useAnalysis();
+  const [selectedHistoryId, setSelectedHistoryId] = useState<number | null>(null);
+  const { analysisStatus, analysisResults, statusMessage, startAnalysis, fetchAnalysisResults } = useAnalysis(); // Destructure fetchAnalysisResults
 
   const handleStartAnalysis = () => {
     if (selectedPolygon) {
       startAnalysis(selectedPolygon);
     }
   };
+
+  useEffect(() => {
+    console.log('useEffect triggered, selectedHistoryId:', selectedHistoryId); // Added console.log
+    if (selectedHistoryId) { // This guard now correctly handles null and undefined
+      fetchAnalysisResults(selectedHistoryId);
+      // When a history item is selected, clear any drawn polygon
+      // to avoid confusion or conflicts if the user then tries to start a new analysis.
+      setSelectedPolygon(null); 
+    }
+  }, [selectedHistoryId, fetchAnalysisResults]);
+
 
   return (
     <Layout>
@@ -26,6 +38,7 @@ function App() {
             statusMessage={statusMessage}
             onStartAnalysis={handleStartAnalysis}
             analysisResults={analysisResults}
+            onHistoryItemSelected={setSelectedHistoryId}
           />
         </Box>
         <Box sx={{ flexGrow: 1, height: '100%', minHeight: '500px' }}>
