@@ -4,17 +4,29 @@ import area from '@turf/area';
 import ResultsSummary from './ResultsSummary';
 import SpeciesList from './SpeciesList';
 import AnalysisHistory from './AnalysisHistory';
+import AnalysisParameters, { type AnalysisWeights } from './AnalysisParameters'; // Import new components
 
 interface InfoPanelProps {
   selectedPolygon: any;
   analysisStatus: 'idle' | 'loading' | 'success' | 'error';
   statusMessage: { id: number; message: string };
-  onStartAnalysis: () => void;
+  onStartAnalysis: (weights: AnalysisWeights) => void; // Pass weights up
   analysisResults: any;
-  onHistoryItemSelected: (id: number) => void; // New prop
+  onHistoryItemSelected: (id: number) => void;
+  weights: AnalysisWeights; // Receive weights and handler
+  onWeightChange: (newWeights: AnalysisWeights) => void;
 }
 
-const InfoPanel: React.FC<InfoPanelProps> = ({ selectedPolygon, analysisStatus, statusMessage, onStartAnalysis, analysisResults, onHistoryItemSelected }) => { // Destructure new prop
+const InfoPanel: React.FC<InfoPanelProps> = ({ 
+  selectedPolygon, 
+  analysisStatus, 
+  statusMessage, 
+  onStartAnalysis, 
+  analysisResults, 
+  onHistoryItemSelected,
+  weights,
+  onWeightChange
+ }) => {
   const [tabIndex, setTabIndex] = useState(0);
 
   const polygonArea = selectedPolygon ? area(selectedPolygon) / 1000000 : 0; // Convert to sq km
@@ -65,10 +77,15 @@ const InfoPanel: React.FC<InfoPanelProps> = ({ selectedPolygon, analysisStatus, 
                     </Alert>
                   )}
                 </Box>
+                <AnalysisParameters 
+                  weights={weights} 
+                  onWeightChange={onWeightChange} 
+                  disabled={analysisStatus === 'loading'} 
+                />
                 <Button
                   variant="contained"
                   color="primary"
-                  onClick={onStartAnalysis}
+                  onClick={() => onStartAnalysis(weights)}
                   disabled={!selectedPolygon || analysisStatus === 'loading' || !isAreaValid}
                   fullWidth
                 >

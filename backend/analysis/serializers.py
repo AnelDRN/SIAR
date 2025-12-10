@@ -18,6 +18,11 @@ class AnalysisRequestSerializer(GeoFeatureModelSerializer):
             "area_of_interest",
             "status",
             "created_at",
+            "slope_weight",
+            "altitude_weight",
+            "soil_weight",
+            "precipitation_weight",
+            "land_cover_weight",
         )
         read_only_fields = ("status", "created_at")
 
@@ -54,9 +59,19 @@ class AnalysisResultSerializer(GeoFeatureModelSerializer):
             "request",
             "result_area", # This field is required for the geometry
             "viability_level",
+            # Suitability flags
             "slope_suitability",
             "soil_suitability",
             "altitude_suitability",
             "precipitation_suitability",
+            "land_cover_suitability",
+            # Raw values
+            "slope",
+            "altitude",
+            "silt_percentage",
+            "clay_percentage",
+            "annual_precipitation",
+            "land_cover_type",
+            # Recommendations
             "recommended_species",
         )

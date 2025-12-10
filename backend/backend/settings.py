@@ -164,6 +164,9 @@ PRECIPITATION_MIN_MM = env.float('PRECIPITATION_MIN_MM')
 PRECIPITATION_MAX_MM = env.float('PRECIPITATION_MAX_MM')
 MAX_AREA_FOR_TILING = env.float('MAX_AREA_FOR_TILING', default=10000)
 
+# Feature Toggles
+ENABLE_LAND_COVER_ANALYSIS = env.bool('ENABLE_LAND_COVER_ANALYSIS', default=False)
+
 # Data Provider Configuration
 # ---------------------------
 DATA_PROVIDERS = {
@@ -171,6 +174,7 @@ DATA_PROVIDERS = {
     'soil': 'analysis.data_acquisition.SoilGridsProvider',
     'precipitation': 'analysis.data_acquisition.LocalFilePrecipitationProvider',
     'species': 'analysis.data_acquisition.GBIFAPIProvider',
+    'land_cover': 'analysis.data_acquisition.LandCoverProvider', # New provider
 }
 
 # Logging Configuration

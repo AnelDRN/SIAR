@@ -5,24 +5,31 @@ import MapView from './components/MapView';
 import Layout from './components/Layout';
 import InfoPanel from './components/InfoPanel';
 import { useAnalysis } from './hooks/useAnalysis';
+import { type AnalysisWeights } from './components/AnalysisParameters';
 
 function App() {
   const [selectedPolygon, setSelectedPolygon] = useState<any>(null);
   const [selectedHistoryId, setSelectedHistoryId] = useState<number | null>(null);
-  const { analysisStatus, analysisResults, statusMessage, startAnalysis, fetchAnalysisResults } = useAnalysis(); // Destructure fetchAnalysisResults
+  const { analysisStatus, analysisResults, statusMessage, startAnalysis, fetchAnalysisResults } = useAnalysis();
+  
+  // Add state for weights, with a neutral default
+  const [weights, setWeights] = useState<AnalysisWeights>({
+    slope_weight: 3,
+    altitude_weight: 3,
+    soil_weight: 3,
+    precipitation_weight: 3,
+    land_cover_weight: 3,
+  });
 
-  const handleStartAnalysis = () => {
+  const handleStartAnalysis = (analysisWeights: AnalysisWeights) => {
     if (selectedPolygon) {
-      startAnalysis(selectedPolygon);
+      startAnalysis(selectedPolygon, analysisWeights);
     }
   };
 
   useEffect(() => {
-    console.log('useEffect triggered, selectedHistoryId:', selectedHistoryId); // Added console.log
-    if (selectedHistoryId) { // This guard now correctly handles null and undefined
+    if (selectedHistoryId) {
       fetchAnalysisResults(selectedHistoryId);
-      // When a history item is selected, clear any drawn polygon
-      // to avoid confusion or conflicts if the user then tries to start a new analysis.
       setSelectedPolygon(null); 
     }
   }, [selectedHistoryId, fetchAnalysisResults]);
@@ -39,6 +46,8 @@ function App() {
             onStartAnalysis={handleStartAnalysis}
             analysisResults={analysisResults}
             onHistoryItemSelected={setSelectedHistoryId}
+            weights={weights}
+            onWeightChange={setWeights}
           />
         </Box>
         <Box sx={{ flexGrow: 1, height: '100%', minHeight: '500px' }}>

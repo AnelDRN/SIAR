@@ -1,4 +1,5 @@
 from django.contrib.gis.db import models
+from django.core.validators import MinValueValidator, MaxValueValidator
 
 class AnalysisRequest(models.Model):
     """
@@ -17,6 +18,13 @@ class AnalysisRequest(models.Model):
         choices=StatusChoices.choices,
         default=StatusChoices.PENDING
     )
+
+    # Analysis weights
+    slope_weight = models.PositiveSmallIntegerField(default=3, validators=[MinValueValidator(1), MaxValueValidator(5)], help_text="Weight for slope criterion (1-5)")
+    altitude_weight = models.PositiveSmallIntegerField(default=3, validators=[MinValueValidator(1), MaxValueValidator(5)], help_text="Weight for altitude criterion (1-5)")
+    soil_weight = models.PositiveSmallIntegerField(default=3, validators=[MinValueValidator(1), MaxValueValidator(5)], help_text="Weight for soil criterion (1-5)")
+    precipitation_weight = models.PositiveSmallIntegerField(default=3, validators=[MinValueValidator(1), MaxValueValidator(5)], help_text="Weight for precipitation criterion (1-5)")
+    land_cover_weight = models.PositiveSmallIntegerField(default=3, validators=[MinValueValidator(1), MaxValueValidator(5)], help_text="Weight for land cover criterion (1-5)")
 
     def __str__(self):
         return f"AnalysisRequest {self.id} - {self.status}"
@@ -46,11 +54,20 @@ class AnalysisResult(models.Model):
     result_area = models.PolygonField()
     viability_level = models.CharField(max_length=10, choices=VIABILITY_LEVELS)
     
-    # Individual criteria scores
+    # Individual criteria suitability flags
     slope_suitability = models.BooleanField(default=False)
     soil_suitability = models.BooleanField(default=False)
     altitude_suitability = models.BooleanField(default=False)
     precipitation_suitability = models.BooleanField(default=False)
+    land_cover_suitability = models.BooleanField(default=False)
+
+    # Raw values for transparency
+    slope = models.FloatField(null=True, help_text="Average slope in degrees")
+    altitude = models.FloatField(null=True, help_text="Average altitude in meters")
+    silt_percentage = models.FloatField(null=True, help_text="Average silt percentage")
+    clay_percentage = models.FloatField(null=True, help_text="Average clay percentage")
+    annual_precipitation = models.FloatField(null=True, help_text="Annual precipitation in mm")
+    land_cover_type = models.IntegerField(null=True, help_text="ESA WorldCover land cover type ID")
 
     recommended_species = models.ManyToManyField(Species, blank=True)
 

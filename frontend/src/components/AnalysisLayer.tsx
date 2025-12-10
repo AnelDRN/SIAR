@@ -15,6 +15,19 @@ const styleResults = (feature: any) => {
   }
 };
 
+const landCoverMap: { [key: number]: string } = {
+    10: 'Cobertura arbórea',
+    20: 'Arbustos',
+    30: 'Pradera',
+    40: 'Cultivos',
+    50: 'Zona Urbana',
+    60: 'Vegetación escasa',
+    80: 'Cuerpos de agua',
+    90: 'Humedal herbáceo',
+    95: 'Manglares',
+    100: 'Musgo y liquen',
+};
+
 const SuitabilityChip: React.FC<{ suitable: boolean, label: string }> = ({ suitable, label }) => (
     <Chip
         label={label}
@@ -64,6 +77,18 @@ const AnalysisLayer: React.FC<AnalysisLayerProps> = ({ analysisResults }) => {
                     <SuitabilityChip suitable={properties.soil_suitability} label="Suelo" />
                     <SuitabilityChip suitable={properties.altitude_suitability} label="Altitud" />
                     <SuitabilityChip suitable={properties.precipitation_suitability} label="Precipitación" />
+                    <SuitabilityChip suitable={properties.land_cover_suitability} label="Cobertura Suelo" />
+                </Box>
+
+                <Typography variant="subtitle1" sx={{ mt: 2 }}>
+                  Datos de Transparencia:
+                </Typography>
+                <Box component="ul" sx={{ pl: 2, m: 0, listStyleType: 'none' }}>
+                    {properties.slope !== null && <li><Typography variant="body2">Pendiente: {properties.slope?.toFixed(2)}°</Typography></li>}
+                    {properties.altitude !== null && <li><Typography variant="body2">Altitud: {properties.altitude?.toFixed(0)} m</Typography></li>}
+                    {properties.annual_precipitation !== null && <li><Typography variant="body2">Precipitación Anual: {properties.annual_precipitation?.toFixed(0)} mm</Typography></li>}
+                    {properties.silt_percentage !== null && <li><Typography variant="body2">Limo: {properties.silt_percentage?.toFixed(1)}% / Arcilla: {properties.clay_percentage?.toFixed(1)}%</Typography></li>}
+                    {properties.land_cover_type !== null && <li><Typography variant="body2">Tipo de Cobertura: {landCoverMap[properties.land_cover_type] || 'Desconocido'}</Typography></li>}
                 </Box>
 
                 {properties.viability_level === 'HIGH' && properties.recommended_species?.length > 0 && (

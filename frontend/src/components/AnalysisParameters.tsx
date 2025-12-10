@@ -1,52 +1,69 @@
 import React from 'react';
-import { Box, Typography, List, ListItem, ListItemIcon, ListItemText, Paper } from '@mui/material';
-import StraightenIcon from '@mui/icons-material/Straighten';
-import LandscapeIcon from '@mui/icons-material/Landscape';
-import WaterDropIcon from '@mui/icons-material/WaterDrop';
-import GrassIcon from '@mui/icons-material/Grass';
+import { Box, Typography, Paper, Slider, Grid } from '@mui/material';
 
-const parameters = [
-  { 
-    icon: <LandscapeIcon />, 
-    primary: 'Pendiente', 
-    secondary: '< 30 grados' 
-  },
-  { 
-    icon: <StraightenIcon />, 
-    primary: 'Altitud', 
-    secondary: '0 - 3000 metros' 
-  },
-  { 
-    icon: <GrassIcon />, 
-    primary: 'Composición del Suelo', 
-    secondary: 'Limo > 10%, Arcilla < 70%' 
-  },
-  { 
-    icon: <WaterDropIcon />, 
-    primary: 'Precipitación Anual', 
-    secondary: '500mm - 2000mm' 
-  },
+// Define the shape of the weights object so it can be shared
+export type AnalysisWeights = {
+  slope_weight: number;
+  altitude_weight: number;
+  soil_weight: number;
+  precipitation_weight: number;
+  land_cover_weight: number;
+}
+
+interface AnalysisParametersProps {
+  weights: AnalysisWeights;
+  onWeightChange: (newWeights: AnalysisWeights) => void;
+  disabled: boolean;
+}
+
+const marks = [
+  { value: 1, label: 'Bajo' },
+  { value: 3, label: 'Medio' },
+  { value: 5, label: 'Alto' },
 ];
 
-const AnalysisParameters: React.FC = () => {
+const weightLabels: { key: keyof AnalysisWeights; label: string }[] = [
+    { key: 'slope_weight', label: 'Pendiente' },
+    { key: 'altitude_weight', label: 'Altitud' },
+    { key: 'soil_weight', label: 'Suelo' },
+    { key: 'precipitation_weight', label: 'Precipitación' },
+    { key: 'land_cover_weight', label: 'Cobertura' },
+];
+
+const AnalysisParameters: React.FC<AnalysisParametersProps> = ({ weights, onWeightChange, disabled }) => {
+  
+  const handleSliderChange = (key: keyof AnalysisWeights, value: number) => {
+    onWeightChange({
+      ...weights,
+      [key]: value,
+    });
+  };
+
   return (
     <Paper variant="outlined" sx={{ mt: 2, p: 2 }}>
       <Typography variant="h6" gutterBottom>
-        Criterios de Análisis
+        Ponderación de Criterios
       </Typography>
-      <List dense>
-        {parameters.map((param, index) => (
-          <ListItem key={index}>
-            <ListItemIcon>
-              {param.icon}
-            </ListItemIcon>
-            <ListItemText 
-              primary={param.primary} 
-              secondary={param.secondary} 
+      <Box sx={{ pt: 1, px: 2, opacity: disabled ? 0.5 : 1 }}>
+        {weightLabels.map(({ key, label }) => (
+          <Box key={key} sx={{ mb: 0 }}>
+            <Typography variant="caption" gutterBottom>
+              {label}
+            </Typography>
+            <Slider
+              aria-label={label}
+              value={weights[key]}
+              onChange={(_, value) => handleSliderChange(key, value as number)}
+              valueLabelDisplay="auto"
+              step={1}
+              marks={marks}
+              min={1}
+              max={5}
+              disabled={disabled}
             />
-          </ListItem>
+          </Box>
         ))}
-      </List>
+      </Box>
     </Paper>
   );
 };

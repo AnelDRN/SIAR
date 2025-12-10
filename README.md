@@ -1,20 +1,20 @@
 #  Proyecto SIAR: Sistema de Identificación de Áreas para Reforestación
 
-**SIAR** es una aplicación web geoespacial diseñada para potenciar la restauración de ecosistemas a nivel global, facilitando la toma de decisiones informadas y basadas en datos para proyectos de reforestación.
+**SIAR** es una aplicación web geoespacial diseñada para ayudar en los procesos de restauracion de flora.
 
 ---
 
 ##  Características Principales (MVP)
 
 -   **Selección de Área Interactiva:** Permite al usuario dibujar un polígono de interés directamente sobre un mapa.
--   ** Análisis de Viabilidad Asíncrono:** Procesa en segundo plano múltiples variables geoespaciales (suelo, clima, topografía) para el área seleccionada.
+-   **Análisis de Viabilidad Asíncrono:** Procesa en segundo plano múltiples variables geoespaciales (suelo, clima, topografía) para el área seleccionada.
 -   **Visualización de Resultados:** Genera un mapa de calor que clasifica el terreno en zonas de viabilidad **Alta**, **Media** y **Baja**.
--   **Recomendación de Especies:** Sugiere especies nativas compatibles con las zonas de más alta viabilidad, consultando datos de la API de GBIF.
+-   **Recomendación de Especies:** Sugiere especies nativas compatibles con las zonas de más alta viabilidad.
 -   **Consulta de Datos:** Permite al usuario hacer clic en cualquier zona del resultado para ver los datos que determinaron su clasificación.
 
 ---
 
-##  Pila Tecnológica (Tech Stack)
+##  Tech Stack
 
 | Área              | Tecnología                                                              |
 | ----------------- | ----------------------------------------------------------------------- |
@@ -35,7 +35,7 @@ Para ejecutar este proyecto, solo necesitas tener instalado:
 
 ---
 
-## Guía de Inicio Rápido (Getting Started)
+## Startup Guide
 
 Gracias a Docker, el proyecto está contenido y su configuración es mínima.
 
@@ -46,13 +46,13 @@ Gracias a Docker, el proyecto está contenido y su configuración es mínima.
     ```
 
 2.  **Levanta los Contenedores:**
-    Este comando construirá las imágenes de Docker para el frontend y el backend, descargará la imagen de la base de datos e iniciará todos los servicios.
+    Este comando construirá las imágenes de Docker para el frontend y el backend, descargará la imagen de la base de datos e iniciará todos los servicios. Asegurate de estar ubicarte en el directorio del repositororio clonado para ejecutar el comando con exito.
     ```bash
     docker-compose up -d --build
     ```
     *La primera vez que se ejecute, este proceso puede tardar varios minutos mientras se descargan las dependencias y se construyen las imágenes.*
 
-3.  **¡Listo! Accede a la Aplicación:**
+3.  **Accede a la Aplicación:**
     -   **Interfaz de Usuario (Frontend):** Abre tu navegador y ve a [http://localhost:5173](http://localhost:5173)
     -   **API del Backend:** La API estará disponible en [http://localhost:8000](http://localhost:8000)
 
@@ -77,22 +77,3 @@ Gracias a Docker, el proyecto está contenido y su configuración es mínima.
 ```
 
 ---
-
-## Comandos Útiles
-
-Para ejecutar comandos dentro de los contenedores, puedes usar `docker-compose exec`.
-
--   **Poblar la base de datos con especies de ejemplo:**
-    ```bash
-    docker-compose exec backend python manage.py generate_species_data
-    ```
-
--   **Acceder al shell de Django:**
-    ```bash
-    docker-compose exec backend python manage.py shell
-    ```
-
--   **Ver logs de un servicio (ej. backend):**
-    ```bash
-    docker-compose logs -f backend
-    ```

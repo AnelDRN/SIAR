@@ -1,30 +1,36 @@
 from owslib.wcs import WebCoverageService
+import os
+import django
 
-# The base URL of the WCS service we want to inspect
-WCS_URL = 'http://ows.rasdaman.org/rasdaman/ows'
+# Set up Django environment
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'backend.settings')
+django.setup()
 
-print(f"--- Inspecting WCS Server at: {WCS_URL} ---")
+from django.conf import settings
 
-try:
-    # Connect to the server, trying WCS version 1.0.0 first
-    wcs = WebCoverageService(WCS_URL, version='2.0.1')
-    print("[SUCCESS] Connected using WCS version 2.0.1")
+def inspect_wcs_capabilities():
+    """
+    Connects to the WCS service and lists its available coverages.
+    """
+    wcs_url = settings.LAND_COVER_WCS_URL
+    print(f"Connecting to WCS server at: {wcs_url}")
+    
+    try:
+        wcs = WebCoverageService(wcs_url, version='1.0.0')
+        
+        print("\n--- Available Coverages ---")
+        if not wcs.contents:
+            print("No coverages found.")
+            return
 
-    print("\n--- Available Coverages (Layers) ---")
-    if not wcs.contents:
-        print("No coverages found.")
-    else:
-        for name, layer in wcs.contents.items():
-            print(f"\nCoverage ID: {name}")
-            print(f"  - Title: {layer.title}")
-            # Bounding box is often useful to see the extent
-            if layer.boundingBoxWGS84:
-                print(f"  - BBox (WGS84): {layer.boundingBoxWGS84}")
-            # Supported formats tell us how we can download the data
-            print(f"  - Supported Formats: {layer.supportedFormats}")
+        for cov_id, coverage in wcs.contents.items():
+            print(f"\nID:          {cov_id}")
+            print(f"  Title:     {coverage.title}")
+            print(f"  Abstract:  {getattr(coverage, 'abstract', 'N/A')}")
+            print(f"  CRS List:  {coverage.supportedCRS}")
+            
+    except Exception as e:
+        print(f"\nAn error occurred: {e}")
 
-except Exception as e:
-    print(f"\n[ERROR] Could not connect or inspect the WCS server.")
-    print(f"Details: {e}")
-
-print("\n--- Inspection Complete ---")
+if __name__ == "__main__":
+    inspect_wcs_capabilities()

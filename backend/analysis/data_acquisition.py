@@ -97,6 +97,8 @@ class SoilGridsProvider(BaseDataProvider):
         return {'silt': silt_temp_path, 'clay': clay_temp_path}
 
 
+from owslib.wcs import WebCoverageService
+
 class LocalFilePrecipitationProvider(BaseDataProvider):
     """
     Proveedor para datos de precipitación de WorldClim desde un directorio local.
@@ -111,6 +113,55 @@ class LocalFilePrecipitationProvider(BaseDataProvider):
         # Devuelve la ruta al directorio. El core se encargará de procesar los archivos.
         return self.data_dir
 
+class LandCoverProvider(BaseDataProvider):
+    """
+    Proveedor para datos de Cobertura del Suelo (Land Cover) desde un servicio WCS.
+    """
+    def get_data(self, area_of_interest: GEOSGeometry) -> str:
+        print("[LandCoverProvider] Obteniendo datos de Cobertura del Suelo desde WCS...")
+        wcs = WebCoverageService(settings.LAND_COVER_WCS_URL, version='1.0.0') # Assuming WCS 1.0.0 for now
+
+        bbox = area_of_interest.extent
+        west, south, east, north = bbox
+
+        # Request parameters
+        # Adjust coverage ID based on actual WCS service capabilities
+        params = {
+            'bbox': (west, south, east, north),
+            'format': 'GeoTIFF',
+            'resx': 0.0001, # Request resolution in degrees (~10m)
+            'resy': 0.0001,
+            'crs': 'EPSG:4326', # WGS 84
+            'exceptions': 'application/vnd.ogc.se_xml'
+        }
+
+        # Create a temporary file to save the GeoTIFF
+        fd, temp_filepath = tempfile.mkstemp(suffix='.tif')
+        os.close(fd) # Close the file descriptor immediately
+
+        try:
+            # The getCoverage method might vary slightly based on WCS server implementation
+            response = wcs.getCoverage(
+                identifier=settings.LAND_COVER_COVERAGE_ID,
+                bbox=params['bbox'],
+                format=params['format'],
+                crs=params['crs'],
+                resx=params['resx'],
+                resy=params['resy'],
+                # width=1000, height=1000, # Sometimes required, sometimes resx/resy is enough
+                # transparent=True, # For imagery, not typically for single band data
+            )
+
+            # Write the response content (GeoTIFF) to the temporary file
+            with open(temp_filepath, 'wb') as f:
+                f.write(response.read())
+            
+            print(f"[LandCoverProvider] Datos de cobertura del suelo descargados en: {temp_filepath}")
+            return temp_filepath
+
+        except Exception as e:
+            print(f"[LandCoverProvider] Error al obtener datos de cobertura del suelo: {e}")
+            raise # Re-raise the exception to be caught upstream
 
 class GBIFAPIProvider(BaseDataProvider):
     """

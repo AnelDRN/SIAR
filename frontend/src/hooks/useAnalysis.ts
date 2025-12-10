@@ -1,4 +1,5 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
+import { type AnalysisWeights } from '../components/AnalysisParameters';
 import axios from 'axios';
 import L from 'leaflet';
 
@@ -39,12 +40,12 @@ export const useAnalysis = () => {
   }, []);
 
 
-  const startAnalysis = useCallback((geoJSON: any) => {
+  const startAnalysis = useCallback((geoJSON: any, weights: AnalysisWeights) => {
     if (!geoJSON || !geoJSON.geometry) {
       console.error("Invalid GeoJSON provided to startAnalysis");
       return;
     }
-    console.log('Starting analysis with geoJSON:', geoJSON);
+    console.log('Starting analysis with geoJSON:', geoJSON, 'and weights:', weights);
 
     setAnalysisResults(null);
     setRequestId(null);
@@ -60,7 +61,12 @@ export const useAnalysis = () => {
         messageIndex++;
     }, 2500); // Change message every 2.5 seconds
 
-    axios.post('/api/v1/analysis-requests/', { area_of_interest: geoJSON.geometry })
+    const payload = {
+      area_of_interest: geoJSON.geometry,
+      ...weights,
+    };
+
+    axios.post('/api/v1/analysis-requests/', payload)
       .then(response => {
         console.log('Analysis request successful:', response.data);
         setRequestId(response.data.id);

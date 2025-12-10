@@ -1,7 +1,7 @@
 # **Documento Guía del Proyecto: Sistema de Identificación de Áreas para Reforestación (SIAR)**
 
-**Versión:** 1.7
-**Fecha:** 30 de Noviembre de 2025 (Actualizada)
+**Versión:** 1.8
+**Fecha:** 1 de Diciembre de 2025
 
 **Instrucciones para el Asistente de IA (Gemini CLI)**
 - Este documento es la referencia principal y la **única fuente de verdad** para el "Proyecto SIAR".
@@ -378,15 +378,64 @@
         - [ ] Ninguno.
 
 ---
+- **Resumen de la Sesión del 1 de Diciembre de 2025:**
+    - **Resumen Ejecutivo:** Se implementó la funcionalidad de "Historial de Análisis" y se definió una nueva hoja de ruta para elevar la calidad del software a un nivel profesional. La implementación del historial introdujo varios bugs en cascada (tanto en el backend como en el frontend) que fueron depurados y resueltos. Luego, se inició la Fase 1 de la nueva hoja de ruta ("Análisis de Cobertura del Suelo"), pero la sesión concluyó mientras se depuraba un error de conexión con el servicio externo WCS.
+    - **Hoja de Ruta del Proyecto (Profesional):**
+        - **Fase 1:** Implementar Análisis de Cobertura del Suelo [En Progreso - BLOQUEADO]
+        - **Fase 2:** Aumentar la Transparencia de Resultados [Pendiente]
+        - **Fase 3:** Implementar Análisis Ponderado [Pendiente]
+    - **Hitos Clave de la Sesión:**
+        - [x] Implementación de la UI para el historial de análisis con pestañas en `InfoPanel.tsx`.
+        - [x] Creación del hook `useAnalysisHistory.ts` para obtener datos del historial.
+        - [x] Creación del componente `AnalysisHistory.tsx` para mostrar la lista.
+        - [x] Refactorización de `App.tsx` y `useAnalysis.ts` para manejar la carga de resultados históricos.
+        - [x] **Depuración de `useAnalysisHistory.ts`:** Corregido el error `response.data.sort is not a function` al procesar la `FeatureCollection` de la API.
+        - [x] **Depuración de `App.tsx`:** Corregida la condición en `useEffect` que causaba llamadas a la API con `id` indefinido.
+        - [x] **Definición de Hoja de Ruta Profesional:** Analizada la utilidad del software y definida una estrategia de 3 fases para mejorarlo (Cobertura, Transparencia, Ponderación).
+        - [x] **Inicio de Fase 1:**
+            - [x] Añadido "interruptor" (feature toggle) `ENABLE_LAND_COVER_ANALYSIS`.
+            - [x] Actualizado el modelo `AnalysisResult` y aplicadas las migraciones de BD.
+            - [x] Implementado `LandCoverProvider` para el servicio WCS de cobertura del suelo.
+            - [x] Integrado el proveedor en `core.py` (con varios ciclos de depuración para `KeyError` y `UnboundLocalError`).
+    - **Posición Actual:**
+        - Nos encontramos en la **Fase 1** de la nueva hoja de ruta profesional. Estamos bloqueados intentando implementar el criterio de **Cobertura del Suelo**.
+    - **Siguiente Tarea Inmediata:**
+        - [ ] Diagnosticar y resolver el error `CoverageNotDefined` que devuelve el servicio WCS. El plan actual es forzar una reconstrucción sin caché de los contenedores Docker para descartar un problema de entorno y luego volver a ejecutar el script de diagnóstico `inspect_wcs.py`.
+    - **Bloqueos o Dudas:**
+        - [x] **Error `CoverageNotDefined` del WCS:** El análisis falla porque el servicio externo `https://ows.digitalearth.africa/wcs` rechaza la petición para la capa `esa_worldcover_2020`.
+        - [x] **Posible Discrepancia en Entorno Docker:** Sospechamos que el contenedor de Docker puede no estar usando la versión más reciente de los archivos de configuración (`.env`), lo que impide una depuración correcta del error WCS.
 
-**Sección 9: Mejoras Futuras y Hoja de Ruta Post-MVP**
+---
 
-Esta sección documenta las mejoras estratégicas que se han identificado durante el desarrollo del MVP para ser consideradas en futuras versiones del proyecto.
+**Sección 9: Hoja de Ruta de Profesionalización**
 
-- **Historial de Análisis:** Implementar un sistema para guardar y visualizar el historial de análisis realizados por el usuario.
-- **Refinamiento del Algoritmo:** El algoritmo de clasificación actual (basado en 3 o 4 criterios con puntuación simple) debe ser mejorado para incluir más criterios (hasta 5 o más) y para generar una clasificación más granular o ponderada.
-- **Sistema de Mosaico (Tiling) para WCS:** Implementar la capacidad de dividir grandes áreas de interés en múltiples peticiones más pequeñas para evitar las limitaciones de los servidores WCS (como las experimentadas con Digital Earth Africa para el DEM). (Desprioritizado)
-- **Suite de Pruebas Formal:** Expandir la suite de pruebas para incluir pruebas de UI/integración del frontend, así así como más pruebas unitarias y de estrés para el backend y el módulo de análisis.
-- **Mejora del Layout de UI:** Explorar opciones para reintroducir un layout más sofisticado (como el `Grid` de MUI) si fuera necesario, una vez que la estabilidad del mapa con el layout actual esté garantizada y el tiempo lo permita.
-- **Optimización de Rendimiento:** Optimizar las consultas a la base de datos y el procesamiento geoespacial para grandes áreas.
-- **Manejo de Errores Robustos:** Implementar un manejo de errores más sofisticado tanto en el frontend como en el backend, con logging y notificación.
+Para elevar a SIAR de un MVP funcional a una herramienta de nivel profesional, se ha definido la siguiente hoja de ruta de desarrollo.
+
+*   **Fase 1: Implementar Análisis de Cobertura del Suelo.**
+    *   **Objetivo:** Excluir áreas no reforestables (ciudades, agua, etc.) y hacer los resultados inmediatamente más realistas.
+    *   **Estado:** *En Progreso - BLOQUEADO*
+
+*   **Fase 2: Aumentar la Transparencia de Resultados.**
+    *   **Objetivo:** Guardar y mostrar los valores de datos reales para cada criterio (ej. "Pendiente: 8.5°") para generar confianza y permitir la verificación por parte del usuario experto.
+    *   **Estado:** *Pendiente*
+
+*   **Fase 3: Implementar Análisis Ponderado (Weighted Overlay).**
+    *   **Objetivo:** Dar al usuario profesional el control para ajustar la importancia relativa (el "peso") de cada criterio, permitiendo que el análisis se adapte al contexto local y al conocimiento experto.
+    *   **Estado:** *Pendiente*
+
+---
+
+**Otras Mejoras Esenciales:**
+
+Además de la hoja de ruta principal, se han identificado otras mejoras críticas para la calidad y experiencia de usuario:
+
+*   **Mejoras de UX/UI:**
+    *   **Feedback Visual en el Mapa:** Resaltar el polígono de selección activa con un color o borde diferente.
+    *   **Botón "Limpiar Resultados":** Permitir al usuario borrar fácilmente los resultados del mapa y volver a un estado inicial.
+    *   **Rediseño de Popups de Resultados:** Mejorar la presentación visual de la información en los popups para una comprensión más rápida y atractiva.
+    *   **Indicador de Selección en Historial:** Resaltar visualmente el elemento del historial que se está mostrando actualmente en el mapa.
+*   **Suite de Pruebas Formal:**
+    *   Expandir la suite de pruebas para incluir pruebas de UI/integración del frontend, así como más pruebas unitarias y de estrés para el backend y el módulo de análisis.
+*   **Manejo de Errores y Logging Robusto:**
+    *   Implementar un sistema más sofisticado para el registro de errores y eventos en el backend, con notificaciones si es posible, para facilitar el diagnóstico y mantenimiento.
+    *   Mejorar los mensajes de error en el frontend para que sean más descriptivos y útiles para el usuario.
