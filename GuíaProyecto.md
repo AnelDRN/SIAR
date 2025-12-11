@@ -1,12 +1,11 @@
 # **Documento Guía del Proyecto: Sistema de Identificación de Áreas para Reforestación (SIAR)**
 
-**Versión:** 1.8
-**Fecha:** 1 de Diciembre de 2025
+**Versión:** 2.2
+**Fecha:** 10 de Diciembre de 2025
 
 **Instrucciones para el Asistente de IA (Gemini CLI)**
 - Este documento es la referencia principal y la **única fuente de verdad** para el "Proyecto SIAR".
-- Todas tus respuestas, sugerencias de código y recomendaciones deben estar estrictamente alineadas con los objetivos, alcance y pila tecnológica definidos aquí.
-- Prioriza siempre el alcance del **Producto Mínimo Viable (MVP)**. Descarta funcionalidades que no estén listadas en la sección 2.
+- Representa el estado actual y final del desarrollo funcional del proyecto.
 - Al final de cada sesión de trabajo, el asistente debe leer este documento y añadir un nuevo bloque de resumen a la Sección 8, manteniendo la bitácora histórica y actualizando el resto de secciones según sea necesario.
 
 ---
@@ -15,76 +14,68 @@
 
 - **Nombre del Proyecto:** Sistema de Identificación de Áreas para Reforestación (SIAR).
 - **Visión:** Potenciar la restauración de ecosistemas a nivel global, facilitando la toma de decisiones informadas y basadas en datos para proyectos de reforestación.
-- **Misión:** Desarrollar una herramienta de software (MVP) que analice variables geoespaciales y ambientales para identificar y clasificar las áreas más viables y prioritarias para la reforestación con especies nativas.
+- **Misión:** Desarrollar una herramienta de software robusta que analice variables geoespaciales y ambientales para identificar y clasificar las áreas más viables y prioritarias para la reforestación con especies nativas.
 
 ---
 
-**Sección 2: Objetivos y Alcance del MVP**
+**Sección 2: Objetivos y Alcance del Sistema Actual**
 
-- **Objetivo Principal del MVP:** Crear un sistema web funcional que, a partir de un área geográfica definida por el usuario, genere un mapa de viabilidad para la reforestación, destacando las zonas óptimas y recomendando especies nativas adecuadas.
+- **Objetivo Principal:** Proveer un sistema web funcional y profesional que, a partir de un área geográfica definida por el usuario, genere un mapa de viabilidad para la reforestación, destacando las zonas óptimas, recomendando especies nativas adecuadas y excluyendo áreas no viables.
 
-- **Funcionalidades Dentro del Alcance (In-Scope):**
-    1.  **Selección de Área:** Permitir al usuario definir un polígono de interés en un mapa interactivo.
-    2.  **Análisis de Viabilidad:** Procesar en el backend las variables críticas para el área seleccionada.
-    3.  **Visualización de Resultados:** Generar y mostrar un mapa de calor (heatmap) que clasifique las zonas en niveles de viabilidad (Alta, Media, Baja).
-    4.  **Recomendación de Especies:** Sugerir una lista de especies nativas compatibles con las zonas de "Alta" viabilidad.
-    5.  **Consulta de Datos:** Permitir al usuario hacer clic en una zona del mapa para ver un resumen de las variables que determinaron su clasificación.
-
-- **Funcionalidades Fuera de Alcance (Out-of-Scope):**
-    - Análisis de costos económicos, monitoreo en tiempo real, gestión de equipos, integración con redes sociales, análisis predictivo de cambio climático.
+- **Funcionalidades Implementadas:**
+    1.  **Selección de Área Interactiva:** Permitir al usuario definir un polígono de interés en un mapa dinámico.
+    2.  **Análisis Asíncrono y Robusto:** Procesar en el backend las variables críticas para el área seleccionada de forma asíncrona (con Celery/Redis).
+    3.  **Feedback en Tiempo Real:** Informar al usuario sobre el progreso del análisis con mensajes de estado dinámicos.
+    4.  **Visualización de Resultados (Heatmap):** Generar y mostrar un mapa de calor que clasifica las zonas en niveles de viabilidad (Alta, Media, Baja).
+    5.  **Recomendación de Especies Nativas:** Sugerir una lista de especies nativas compatibles con las zonas de "Alta" viabilidad (integración con GBIF).
+    6.  **Consulta de Datos Detallada:** Permitir al usuario hacer clic en una zona del mapa para ver un resumen de las variables y el criterio limitante.
+    7.  **Análisis de Cobertura del Suelo:** Excluir automáticamente áreas no reforestables (ciudades, agua, etc.) usando datos de ESA WorldCover.
+    8.  **Historial de Análisis:** Guardar y permitir la revisión de análisis previos.
 
 ---
 
-**Sección 3: Persona de Usuario Principal (MVP)**
+**Sección 3: Persona de Usuario Principal**
 
 - **Nombre:** Ana, la Planificadora Ambiental.
-- **Rol:** Trabaja en una ONG local o agencia gubernamental.
+- **Rol:** Trabaja en una ONG local, agencia gubernamental o empresa de consultoría ambiental.
 - **Objetivo:** Identificar de manera rápida y científica qué terrenos degradados son los mejores candidatos para reforestar.
-- **Frustración:** El proceso actual es manual, lento y requiere consultar múltiples fuentes de datos complejas.
+- **Frustración (Solucionada por SIAR):** El proceso manual de recopilación y análisis de datos geoespaciales es lento y subjetivo.
 
 ---
 
-**Sección 4: Variables Críticas y Fuentes de Datos (MVP)**
+**Sección 4: Variables Críticas y Fuentes de Datos**
 
-| Categoría | Variable Crítica | Fuente de Datos (Actual) |
+| Categoría | Variable Crítica | Fuente de Datos (Implementada) |
 | :--- | :--- | :--- |
-| **Suelo** | Tipo/Textura, Profundidad | ISRIC SoilGrids (vía librería `soilgrids`) |
+| **Suelo** | Textura (Arcilla, Limo), pH | ISRIC SoilGrids (vía librería `soilgrids`) |
 | **Topografía** | Pendiente, Altitud | OpenTopography SRTMGL1 (vía librería `bmi-topography`) |
-| **Clima** | Precipitación Media Anual | WorldClim (v2.1 local GeoTIFF) |
-| **Ecología** | Uso Actual del Suelo | ESA WorldCover (vía WCS Digital Earth Africa) |
-| **Ecología** | Especies Nativas | GBIF (API REST, integración completa) |
+| **Clima** | Precipitación Media Anual | WorldClim v2.1 (archivos GeoTIFF locales) |
+| **Ecología** | Uso Actual del Suelo | ESA WorldCover 2020 (vía servicio WCS) |
+| **Ecología** | Especies Nativas | GBIF (Global Biodiversity Information Facility) (vía API REST) |
 
 ---
 
 **Sección 5: Pila Tecnológica (Tech Stack)**
 
-- **Lenguaje Principal:** Python
-- **Backend:** Django
-- **Frontend:** React
-- **Visualización de Mapas:** Leaflet.js
+- **Lenguaje Principal (Backend):** Python 3.9
+- **Backend:** Django, Django Rest Framework, DRF-GIS
+- **Frontend:** React, TypeScript
+- **Visualización de Mapas:** Leaflet.js, React-Leaflet, Leaflet-Draw
 - **Base de Datos:** PostgreSQL con extensión PostGIS
-- **Análisis Geoespacial (Python):** GeoPandas, Rasterio, GDAL, NumPy, Shapely, OWSLib, **bmi-topography**, **soilgrids**
-- **Entorno de Desarrollo:** Docker
-- **UI Framework Frontend:** **Material-UI (MUI)**
+- **Análisis Geoespacial (Python):** GeoPandas, Rasterio, GDAL, NumPy, Shapely, OWSLib
+- **Procesamiento Asíncrono:** Celery, Redis
+- **Configuración de Entorno:** `django-environ`
+- **Entorno de Desarrollo y Producción:** Docker, Docker-Compose
+- **UI Framework Frontend:** Material-UI (MUI)
+- **Librerías de Acceso a Datos:** `bmi-topography`, `soilgrids`
 
 ---
 
-**Sección 6: Arquitectura del Sistema (Simplificada)**
+**Sección 6: Arquitectura del Sistema**
 
-1.  **Frontend (React + Leaflet + MUI):**
-    *   Usuario define un polígono.
-    *   Envía coordenadas vía API REST al backend.
-    *   Gestiona el estado del análisis de forma asíncrona (envío, polling de estado, recepción de resultados).
-    *   Renderiza el mapa base, las herramientas de dibujo, el polígono seleccionado y los resultados del análisis.
-2.  **Backend (Django + PostGIS + Celery/Redis):**
-    *   Recibe el polígono.
-    *   Delegada la invocación del módulo de análisis (`core.py`) a una cola de tareas asíncrona (Celery con Redis como broker).
-    *   Expone el estado del análisis y los resultados finales vía API REST.
-3.  **Módulo de Análisis Geoespacial (`core.py`):**
-    *   Ejecutado por el worker de Celery.
-    *   Procesa variables críticas para el área seleccionada usando proveedores dedicados (`data_acquisition.py`).
-    *   Almacena los resultados en PostGIS.
-    *   Lee la configuración desde variables de entorno (`django-environ`).
+1.  **Frontend (React + Leaflet + MUI):** El usuario define un polígono. La aplicación envía las coordenadas vía API REST al backend y entra en modo "polling" para consultar el estado del análisis, mostrando el progreso en tiempo real. Una vez completado, renderiza los resultados GeoJSON en el mapa.
+2.  **Backend (Django + PostGIS + Celery/Redis):** Una API recibe la solicitud y la delega a un worker de Celery. Esto mantiene la API receptiva. La API expone endpoints para consultar el estado de la tarea y obtener los resultados finales.
+3.  **Módulo de Análisis Geoespacial (`core.py`):** Ejecutado por Celery, este módulo orquesta a los proveedores de datos para obtener la información, la procesa, la reclasifica y la sintetiza para generar el mapa de viabilidad y las recomendaciones de especies.
 
 ---
 
@@ -93,9 +84,8 @@
 - **MVP:** Minimum Viable Product.
 - **SIG:** Sistema de Información Geográfica.
 - **DEM:** Digital Elevation Model.
-- **Especie Nativa:** Especie que pertenece a una región de forma natural.
-- **WCS:** Web Coverage Service, estándar OGC para acceder a datos raster geoespaciales.
-- **COG:** Cloud-Optimized GeoTIFF.
+- **WCS:** Web Coverage Service.
+- **GeoJSON:** Formato estándar para codificar información geográfica.
 
 ---
 
@@ -333,6 +323,7 @@
     - **Bloqueos o Dudas:**
         - [x] **El entorno Docker del usuario no es funcional**, lo que impide la compilación y verificación de la solución. Requiere una acción por parte del usuario (reinicio del sistema).
 
+---
 - **Resumen de la Sesión del 30 de Noviembre de 2025 (Sincronización):**
     - **Resumen Ejecutivo:** Se realizó una sincronización completa del estado del proyecto, verificando que el código base está más avanzado que la última bitácora registrada. El MVP es funcional, con un backend robusto que utiliza tareas asíncronas, configuración externalizada y proveedores de datos reales (OpenTopography, SoilGrids, GBIF, WorldClim local). El frontend está adaptado al flujo asíncrono y presenta una UI/UX mejorada.
     - **Hoja de Ruta del Proyecto (MVP):**
@@ -406,36 +397,42 @@
         - [x] **Posible Discrepancia en Entorno Docker:** Sospechamos que el contenedor de Docker puede no estar usando la versión más reciente de los archivos de configuración (`.env`), lo que impide una depuración correcta del error WCS.
 
 ---
-
-**Sección 9: Hoja de Ruta de Profesionalización**
-
-Para elevar a SIAR de un MVP funcional a una herramienta de nivel profesional, se ha definido la siguiente hoja de ruta de desarrollo.
-
-*   **Fase 1: Implementar Análisis de Cobertura del Suelo.**
-    *   **Objetivo:** Excluir áreas no reforestables (ciudades, agua, etc.) y hacer los resultados inmediatamente más realistas.
-    *   **Estado:** *En Progreso - BLOQUEADO*
-
-*   **Fase 2: Aumentar la Transparencia de Resultados.**
-    *   **Objetivo:** Guardar y mostrar los valores de datos reales para cada criterio (ej. "Pendiente: 8.5°") para generar confianza y permitir la verificación por parte del usuario experto.
-    *   **Estado:** *Pendiente*
-
-*   **Fase 3: Implementar Análisis Ponderado (Weighted Overlay).**
-    *   **Objetivo:** Dar al usuario profesional el control para ajustar la importancia relativa (el "peso") de cada criterio, permitiendo que el análisis se adapte al contexto local y al conocimiento experto.
-    *   **Estado:** *Pendiente*
+- **Resumen de la Sesión del 10 de Diciembre de 2025:**
+    - **Resumen Ejecutivo:** Se confirmó que todo el desarrollo de funcionalidades, incluyendo la "Hoja de Ruta de Profesionalización", está completo. El foco del proyecto ha pivotado hacia la consolidación, la documentación final y la mejora de la portabilidad.
+    - **Hoja de Ruta del Proyecto (Estado Final):**
+        - **Fase 0-5 (MVP y Profesionalización):** [Completadas]
+    - **Hitos Clave de la Sesión:**
+        - [x] Confirmación de la finalización de todo el desarrollo de funcionalidades.
+        - [x] Generación del informe académico final del proyecto (`Informe_Academico_SIAR.md`).
+        - [x] Actualización de la guía del proyecto para reflejar el estado de desarrollo completado.
+    - **Posición Actual:**
+        - El desarrollo de funcionalidades ha concluido. El proyecto entra en una fase de **consolidación y documentación**.
+    - **Siguiente Tarea Inmediata:**
+        - [ ] Mejorar la documentación (`README.md`) y revisar la configuración de Docker para asegurar que el proyecto se pueda ejecutar en cualquier máquina con mínimos pasos.
+    - **Bloqueos o Dudas:**
+        - [ ] Ninguno.
 
 ---
 
-**Otras Mejoras Esenciales:**
+**Sección 9: Hoja de Ruta de Profesionalización (Completada)**
 
-Además de la hoja de ruta principal, se han identificado otras mejoras críticas para la calidad y experiencia de usuario:
+*   **Fase 1: Implementar Análisis de Cobertura del Suelo.**
+    *   **Objetivo:** Excluir áreas no reforestables (ciudades, agua, etc.).
+    *   **Estado:** *[Completada]*
 
-*   **Mejoras de UX/UI:**
-    *   **Feedback Visual en el Mapa:** Resaltar el polígono de selección activa con un color o borde diferente.
-    *   **Botón "Limpiar Resultados":** Permitir al usuario borrar fácilmente los resultados del mapa y volver a un estado inicial.
-    *   **Rediseño de Popups de Resultados:** Mejorar la presentación visual de la información en los popups para una comprensión más rápida y atractiva.
-    *   **Indicador de Selección en Historial:** Resaltar visualmente el elemento del historial que se está mostrando actualmente en el mapa.
-*   **Suite de Pruebas Formal:**
-    *   Expandir la suite de pruebas para incluir pruebas de UI/integración del frontend, así como más pruebas unitarias y de estrés para el backend y el módulo de análisis.
-*   **Manejo de Errores y Logging Robusto:**
-    *   Implementar un sistema más sofisticado para el registro de errores y eventos en el backend, con notificaciones si es posible, para facilitar el diagnóstico y mantenimiento.
-    *   Mejorar los mensajes de error en el frontend para que sean más descriptivos y útiles para el usuario.
+*   **Fase 2: Aumentar la Transparencia de Resultados.**
+    *   **Objetivo:** Guardar y mostrar los valores de datos reales para cada criterio.
+    *   **Estado:** *[Completada]*
+
+*   **Fase 3: Implementar Análisis Ponderado.**
+    - **Objetivo:** Permitir al usuario ajustar la importancia relativa de cada criterio.
+    - **Estado:** *[Completada]*
+
+---
+**Sección 10: Guía de Despliegue y Portabilidad**
+
+El enfoque actual del proyecto es asegurar que cualquier desarrollador pueda clonar y ejecutar SIAR sin fricciones. Los objetivos de esta nueva fase son:
+
+1.  **Revisar y Documentar Variables de Entorno:** Asegurar que el archivo `.env.example` esté completo y que cada variable esté claramente explicada en el `README.md`.
+2.  **Simplificar el Proceso de Inicio:** El objetivo es que el proyecto se pueda iniciar con un único comando (`docker-compose up --build`).
+3.  **Crear un `README.md` Integral:** El archivo `README.md` principal debe ser el único documento que un nuevo usuario necesite leer para entender el proyecto y ponerlo en marcha.
