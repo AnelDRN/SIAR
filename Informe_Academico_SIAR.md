@@ -242,28 +242,27 @@ Ana observa que las zonas más planas en los valles y las laderas de pendiente s
 **Paso 4: Consulta de Datos y Recomendación de Especies**
 Para entender mejor los resultados, Ana interactúa con el mapa:
 *   Hace clic en un polígono **amarillo** (Baja Viabilidad). Se abre una ventana emergente (popup) con la siguiente información:
-    ```
-    ---------------------------------
+    
+    
     | Nivel de Viabilidad: BAJA     |
-    |-------------------------------|
+    | :-----------------------------|
     | Criterio Limitante: Pendiente |
     | (Valor: > 30°)                |
-    ---------------------------------
-    ```
+    
+   
 *   Luego, hace clic en un polígono **verde oscuro** (Alta Viabilidad). El popup muestra información mucho más rica:
-    ```
-    ---------------------------------------------
+    
+    
     | Nivel de Viabilidad: ALTA                 |
-    |-------------------------------------------|
+    | :-----------------------------------------|
     | El análisis de todas las variables indica |
-    | que esta zona es óptima para reforestación.|
-    |-------------------------------------------|
+    | que esta zona es óptima para reforestación|
     | Especies Nativas Recomendadas:            |
-    | - Quercus humboldtii (Roble Andino)         |
-    | - Cedrela montana (Cedro de Montaña)        |
-    | - Alnus acuminata (Aliso)                   |
-    ---------------------------------------------
-    ```
+    | - Quercus humboldtii (Roble Andino)       |
+    | - Cedrela montana (Cedro de Montaña)      |
+    | - Alnus acuminata (Aliso)                 |
+    
+   
 
 **Paso 5: Revisión del Resumen y el Historial**
 Finalmente, Ana dirige su atención al panel lateral, que ahora presenta dos pestañas: "Resumen del Análisis" e "Historial".
